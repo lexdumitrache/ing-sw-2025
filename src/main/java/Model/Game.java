@@ -9,6 +9,7 @@ import Model.Enums.CardLevel;
 import Controller.Enums.MatchLevel;
 import Controller.State;
 import Model.Enums.ConnectorType;
+import Model.Enums.Good;
 import Model.Exceptions.InvalidMethodParameters;
 import Model.Ship.Components.Cabin;
 import Model.Ship.Components.Cannon;
@@ -35,6 +36,10 @@ public class Game implements Serializable, Cloneable {
     private String errorMessage=null;
 
     private List<String> renderCard;
+    /** Goods offered by the card being resolved (index = goodIndex of GetGood), copied for clients. */
+    private List<Good> offeredGoods = new ArrayList<>();
+    /** Image of the last adventure card drawn, shown by the GUI (null before the first card). */
+    private String currentCardImagePath;
 
 
 
@@ -345,6 +350,8 @@ public class Game implements Serializable, Cloneable {
         this.state = old.state;
         final Context context = (old.state != null) ? old.state.getContext() : null;
         this.renderCard = (context != null) ? context.getRender() : new ArrayList<>();
+        this.currentCardImagePath = old.currentCardImagePath;
+        this.offeredGoods = (context != null && context.getGoods() != null) ? new ArrayList<>(context.getGoods()) : new ArrayList<>();
         this.error = old.error;
         this.errorMessage = old.errorMessage;
 
@@ -353,6 +360,24 @@ public class Game implements Serializable, Cloneable {
 
     public List<String> renderCard(){
         return this.renderCard;
+    }
+
+    /**
+     * @return the goods offered by the card being resolved; only filled in the copies sent to clients
+     */
+    public List<Good> getOfferedGoods() {
+        return offeredGoods;
+    }
+
+    /**
+     * @return the image path of the last adventure card drawn, or null if no card was drawn yet
+     */
+    public String getCurrentCardImagePath() {
+        return currentCardImagePath;
+    }
+
+    public void setCurrentCardImagePath(String currentCardImagePath) {
+        this.currentCardImagePath = currentCardImagePath;
     }
 
     /**

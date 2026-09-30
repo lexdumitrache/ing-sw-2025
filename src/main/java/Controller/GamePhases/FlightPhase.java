@@ -62,6 +62,7 @@ public class FlightPhase extends State {
         CardDeck deck;
         deck = controller.getModel().getFlightBoard().getUpcomingCardDeck();
         AdventureCardFilip card = deck.popCard();
+        controller.getModel().setCurrentCardImagePath(card.getImagePath());
         card.accept(new CardResolverVisitor(), controller);
         
     }

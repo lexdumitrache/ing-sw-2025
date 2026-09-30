@@ -68,6 +68,11 @@ final class GameScreen implements GUI.Screen {
     private Direction orientation = Direction.UP;
     private String handTileKey;
 
+    /** Index of the offered good selected to load (goodIndex of GetGood), or -1. */
+    private int selectedGood = -1;
+    private List<Model.Enums.Good> lastOfferedGoods = List.of();
+    private final VBox goodsBox = new VBox(6);
+
     GameScreen(GUI gui) {
         this.gui = gui;
         this.commands = new CommandPanel(gui);
@@ -95,7 +100,7 @@ final class GameScreen implements GUI.Screen {
         hint.getStyleClass().add("hint");
         hint.setWrapText(true);
 
-        final VBox left = new VBox(10, shipTitle, shipBoard, handBox, hint);
+        final VBox left = new VBox(10, shipTitle, shipBoard, handBox, goodsBox, hint);
         left.setPadding(new Insets(12));
         left.setMinWidth(8 * CELL + 60);
 
@@ -188,7 +193,60 @@ final class GameScreen implements GUI.Screen {
         final Player owner = game.getPlayer(shipOwner.getValue() == null ? me : shipOwner.getValue());
         shipBoard.show(owner == null ? null : owner.getShipBoard(), game.getLevel());
         updateHand();
+        updateGoods();
     }
+
+    /**
+     * Shows the goods offered by the card being resolved; the selected one is loaded by clicking a cargo hold.
+     */
+    private void updateGoods() {
+        goodsBox.getChildren().clear();
+        final List<Model.Enums.Good> offered = game.getOfferedGoods() == null ? List.of() : game.getOfferedGoods();
+        if (!offered.equals(lastOfferedGoods)) {
+            lastOfferedGoods = List.copyOf(offered);
+            selectedGood = -1;
+        }
+        if (offered.isEmpty() || !available.contains("GetGood")) {
+            return;
+        }
+
+        final HBox chips = new HBox(6);
+        chips.setAlignment(Pos.CENTER_LEFT);
+        for (int i = 0; i < offered.size(); i++) {
+            final int index = i;
+            final javafx.scene.shape.Rectangle square = new javafx.scene.shape.Rectangle(22, 22, ShipBoardPane.goodColor(offered.get(i)));
+            square.setArcWidth(6);
+            square.setArcHeight(6);
+            final StackPane chip = new StackPane(square);
+            chip.getStyleClass().add("good-chip");
+            if (index == selectedGood) {
+                chip.getStyleClass().add("good-chip-selected");
+            }
+            Tooltip.install(chip, new Tooltip(Text.enumName(offered.get(i)) + " good #" + index));
+            chip.setOnMouseClicked(_ -> {
+                selectedGood = index == selectedGood ? -1 : index;
+                updateGoods();
+                updateHints();
+            });
+            chips.getChildren().add(chip);
+        }
+        goodsBox.getChildren().addAll(sectionTitle("Goods on offer"), chips);
+        updateHints();
+    }
+
+    private void updateHints() {
+        if (!game.getOfferedGoods().isEmpty() && available.contains("GetGood")) {
+            hint.setText(selectedGood < 0
+                    ? "Select a good, then click one of your cargo holds to load it."
+                    : "Click one of your cargo holds to load the selected good.");
+        } else if (hint.getText().isEmpty() && viewingOwnShip() && available.stream().anyMatch(CELL_COMMANDS::contains)) {
+            hint.setText("Click a tile of your ship to see what you can do with it.");
+        }
+    }
+
+    /** Commands that act on one tile of the player's ship. */
+    private static final Set<String> CELL_COMMANDS = Set.of("UseBattery", "UseCrew", "PlaceHuman", "PlacePurpleAlien",
+            "PlaceBrownAlien", "DeleteComponent", "GetGood", "RemoveGood", "MoveGood");
 
     private void updateHand() {
         handBox.getChildren().clear();
@@ -300,7 +358,7 @@ final class GameScreen implements GUI.Screen {
         updateHand();
     }
 
-    private void cellClicked(int row, int col, SpaceshipComponent component) {
+    private void cellClicked(int row, int col, SpaceshipComponent component, Node cell) {
         if (commands.isOpen() && commands.fillCoordinates(row, col)) {
             return;
         }
@@ -311,10 +369,83 @@ final class GameScreen implements GUI.Screen {
         }
 
         final ShipBoard ship = player.getShipBoard();
-        if (component == null && available.contains("PlaceComponent")
-                && selectedTile(ship.getActiveComponent(), ship.getReservedComponents()) != null) {
-            gui.send("PlaceComponent", origin.name(), Integer.toString(row), Integer.toString(col), orientation.name());
+        if (component == null) {
+            if (available.contains("PlaceComponent") && selectedTile(ship.getActiveComponent(), ship.getReservedComponents()) != null) {
+                gui.send("PlaceComponent", origin.name(), Integer.toString(row), Integer.toString(col), orientation.name());
+            }
+            return;
         }
+
+        final List<MenuItem> actions = cellActions(row, col, component);
+        if (!actions.isEmpty()) {
+            new ContextMenu(actions.toArray(new MenuItem[0])).show(cell, javafx.geometry.Side.RIGHT, 0, 0);
+        }
+    }
+
+    /**
+     * @return the currently allowed actions that apply to the clicked tile of the player's own ship
+     */
+    private List<MenuItem> cellActions(int row, int col, SpaceshipComponent component) {
+        final String r = Integer.toString(row), c = Integer.toString(col);
+        final List<MenuItem> items = new ArrayList<>();
+
+        if (component instanceof Model.Ship.Components.BatteryCompartment) {
+            addAction(items, "UseBattery", "Use a battery", r, c);
+        }
+        if (component instanceof Model.Ship.Components.Cabin) {
+            addAction(items, "UseCrew", "Lose a crew member here", r, c);
+            addAction(items, "PlaceHuman", "Place humans", r, c);
+            addAction(items, "PlacePurpleAlien", "Place a purple alien", r, c);
+            addAction(items, "PlaceBrownAlien", "Place a brown alien", r, c);
+        }
+        if (component instanceof Model.Ship.Components.CargoHold hold) {
+            final Model.Enums.Good[] goods = hold.getGoods();
+
+            if (available.contains("GetGood")) {
+                if (selectedGood >= 0 && selectedGood < game.getOfferedGoods().size()) {
+                    int slot = 0;
+                    for (int i = 0; i < goods.length; i++) {
+                        if (goods[i] == null) {
+                            slot = i;
+                            break;
+                        }
+                    }
+                    final String label = "Load the " + Text.enumName(game.getOfferedGoods().get(selectedGood)).toLowerCase() + " good here";
+                    addAction(items, "GetGood", label, Integer.toString(selectedGood), r, c, Integer.toString(slot));
+                } else if (!game.getOfferedGoods().isEmpty()) {
+                    final MenuItem pick = new MenuItem("Select a good on offer first");
+                    pick.setDisable(true);
+                    items.add(pick);
+                }
+            }
+            for (int i = 0; i < goods.length; i++) {
+                if (goods[i] == null) {
+                    continue;
+                }
+                final String name = Text.enumName(goods[i]).toLowerCase();
+                addAction(items, "RemoveGood", "Throw away the " + name + " good", r, c, Integer.toString(i));
+                if (available.contains("MoveGood")) {
+                    final int index = i;
+                    final MenuItem move = new MenuItem("Move the " + name + " good…");
+                    move.setOnAction(_ -> {
+                        commands.openWith("MoveGood", Map.of("oldRow", r, "oldColumn", c, "oldIndex", Integer.toString(index), "newIndex", "0"));
+                        hint.setText("Now click the cargo hold to move the good to, then press Send.");
+                    });
+                    items.add(move);
+                }
+            }
+        }
+        addAction(items, "DeleteComponent", "Remove this tile", r, c);
+        return items;
+    }
+
+    private void addAction(List<MenuItem> items, String command, String label, String... args) {
+        if (!available.contains(command)) {
+            return;
+        }
+        final MenuItem item = new MenuItem(label);
+        item.setOnAction(_ -> gui.send(command, args));
+        items.add(item);
     }
 
     /* ---------------------------------------------------------------- tabs */
@@ -428,6 +559,7 @@ final class GameScreen implements GUI.Screen {
             final Player player = order[i];
             final boolean playing = player.getName().equals(inTurn);
             final Label name = new Label((playing ? "▶ " : "") + player.getName() + (player.getName().equals(me) ? " (you)" : ""));
+            name.setGraphic(new javafx.scene.shape.Circle(6, FlightBoardPane.colorOf(game.getPlayers(), player.getName())));
             if (playing) {
                 name.getStyleClass().add("in-turn");
             }
@@ -443,20 +575,54 @@ final class GameScreen implements GUI.Screen {
                 : "The board has " + board.getCellNumber() + " cells.");
         info.getStyleClass().add("hint");
 
-        final VBox box = new VBox(8, table, info);
+        final FlightBoardPane picture = new FlightBoardPane(560);
+        picture.show(board, game.getLevel(), game.getPlayers(), inTurn);
+
+        final VBox box = new VBox(8, picture, table, info);
         box.setPadding(new Insets(8));
-        return box;
+        final ScrollPane scroll = new ScrollPane(box);
+        scroll.setFitToWidth(true);
+        return scroll;
     }
 
     private Node currentCard() {
-        final TextArea text = new TextArea();
-        text.setEditable(false);
-        text.getStyleClass().add("mono");
         final List<String> lines = game.renderCard();
-        text.setText(lines == null || lines.isEmpty()
-                ? "No card is being resolved. The leader draws the next card."
-                : Text.stripAnsi(String.join("\n", lines)));
-        return text;
+        final boolean resolving = lines != null && !lines.isEmpty();
+
+        final Label title = new Label(resolving ? "Current card" : "Last card");
+        title.getStyleClass().add("section-title");
+
+        final Image image = Images.fromModelPath(game.getCurrentCardImagePath());
+        final Node picture;
+        if (image != null) {
+            final ImageView view = new ImageView(image);
+            view.setFitHeight(360);
+            view.setPreserveRatio(true);
+            view.setSmooth(true);
+            view.getStyleClass().add("card-image");
+            picture = view;
+        } else {
+            picture = new Label("No card drawn yet.\nThe leader draws the first card.");
+        }
+
+        final Label details = new Label(resolving
+                ? Text.stripAnsi(String.join("\n", lines))
+                : "No card is being resolved. The leader draws the next card.");
+        details.getStyleClass().add("mono");
+        details.setWrapText(true);
+
+        final CardDeck deck = game.getFlightBoard().getUpcomingCardDeck();
+        final Label left = new Label(deck == null ? "" : deck.peekCards().size() + " cards left in the flight deck");
+        left.getStyleClass().add("hint");
+
+        final VBox text = new VBox(8, title, details, left);
+        final HBox box = new HBox(16, picture, text);
+        box.setPadding(new Insets(12));
+        HBox.setHgrow(text, Priority.ALWAYS);
+
+        final ScrollPane scroll = new ScrollPane(box);
+        scroll.setFitToWidth(true);
+        return scroll;
     }
 
     private Node players(boolean ranking) {

@@ -105,15 +105,13 @@
 }
 
 .cell-empty {
-    -fx-background-color: rgba(79, 140, 255, 0.16);
-    -fx-border-color: rgba(120, 170, 255, 0.45);
-    -fx-border-radius: 6;
+    -fx-background-color: transparent;
     -fx-background-radius: 6;
     -fx-cursor: hand;
 }
 
 .cell-empty:hover {
-    -fx-background-color: rgba(79, 140, 255, 0.4);
+    -fx-background-color: rgba(255, 210, 90, 0.35);
 }
 
 .cell-filled {
@@ -198,4 +196,38 @@
 
 .scroll-pane, .scroll-pane > .viewport {
     -fx-background-color: transparent;
+}
+
+.rocket-label {
+    -fx-text-fill: #0b0d1c;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.card-image {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 14, 0.3, 0, 4);
+}
+
+.badge {
+    -fx-background-color: rgba(8, 10, 24, 0.82);
+    -fx-background-radius: 6;
+    -fx-padding: 1 5;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.badge-battery { -fx-text-fill: #7dff9a; }
+.badge-crew { -fx-text-fill: #ffffff; }
+.badge-purple { -fx-background-color: #7b3fbf; }
+.badge-brown { -fx-background-color: #8a5a2b; }
+
+.good-chip {
+    -fx-cursor: hand;
+    -fx-padding: 4;
+    -fx-background-radius: 6;
+}
+
+.good-chip-selected {
+    -fx-background-color: rgba(255, 210, 90, 0.35);
 }

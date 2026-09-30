@@ -393,4 +393,17 @@ public class FlightPhaseTest {
             assertTrue(true);
         }
     }
+
+    @Test
+    public void testPickNextCardRecordsCardImage() throws Exception {
+        final Controller flying = TestUtils.TestStateManager.flightPhase2Players(MatchLevel.TRIAL).getController();
+        final Player leader = flying.getModel().getFlightBoard().getTurnOrder()[0];
+        assertNull(flying.getModel().getCurrentCardImagePath());
+
+        flying.pickNextCard(leader.getName());
+
+        assertNotNull(flying.getModel().getCurrentCardImagePath());
+        assertEquals(flying.getModel().getCurrentCardImagePath(), flying.getModel().clone().getCurrentCardImagePath(),
+                "clients receive a clone of the game, which must keep the card image");
+    }
 }

@@ -164,6 +164,14 @@ final class CommandPanel extends VBox {
     }
 
     /**
+     * Opens the form of a command with some arguments already filled in.
+     */
+    void openWith(String command, Map<String, String> values) {
+        open(command);
+        values.forEach(this::fill);
+    }
+
+    /**
      * Puts a clicked cell into the open form: row/column, or for moves the first empty pair
      * (oldRow/oldColumn, then newRow/newColumn).
      *
