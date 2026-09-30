@@ -81,6 +81,10 @@ public final class GameSelectionState extends LoggedInState {
      * @param newGamesList An array of integers representing the new list of game IDs.
      * @return The updated ClientState with the new games list.
      */
+    public Integer[] getGamesList() {
+        return this.gamesList;
+    }
+
     @Override
     public ClientState updateList(Integer[] newGamesList){
         this.gamesList = newGamesList;

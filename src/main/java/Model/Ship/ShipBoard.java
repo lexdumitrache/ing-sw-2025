@@ -20,6 +20,39 @@ public class ShipBoard implements Serializable, Cloneable {
     private static final int ROWS = 5;
     private static final int COLS = 7;
 
+    private static final Map<Integer, List<Integer>> TRIAL_CELLS = Map.of(
+            5, List.of(7),
+            6, List.of(6, 7, 8),
+            7, List.of(5, 6, 7, 8, 9),
+            8, List.of(5, 6, 7, 8, 9),
+            9, List.of(5, 6, 8, 9));
+
+    private static final Map<Integer, List<Integer>> LEVEL2_CELLS = Map.of(
+            5, List.of(6, 8),
+            6, List.of(5, 6, 7, 8, 9),
+            7, List.of(4, 5, 6, 7, 8, 9, 10),
+            8, List.of(4, 5, 6, 7, 8, 9, 10),
+            9, List.of(4, 5, 6, 8, 9, 10));
+
+    /**
+     * @param level the match level
+     * @return for each row, the columns where a component can be placed on a ship of that level
+     */
+    public static Map<Integer, List<Integer>> getValidCells(MatchLevel level) {
+        return switch (level) {
+            case TRIAL -> TRIAL_CELLS;
+            case LEVEL2 -> LEVEL2_CELLS;
+        };
+    }
+
+    /**
+     * @return true if a component can be placed at (row, col) on a ship of the given level
+     */
+    public static boolean isValidCell(MatchLevel level, int row, int col) {
+        final List<Integer> columns = getValidCells(level).get(row);
+        return columns != null && columns.contains(col);
+    }
+
     private final SpaceshipComponent[][] components;
     private SpaceshipComponent activeComponent;
     private final List<SpaceshipComponent> reservedComponents;

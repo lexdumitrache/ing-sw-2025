@@ -1,0 +1,201 @@
+/* Galaxy Trucker GUI: dark space theme */
+
+.root {
+    -fx-font-family: "Helvetica Neue", "Segoe UI", sans-serif;
+    -fx-font-size: 13px;
+    -fx-base: #1e2340;
+    -fx-background: #11142b;
+    -fx-control-inner-background: #1a1f3d;
+    -fx-accent: #4f8cff;
+    -fx-focus-color: #4f8cff;
+    -fx-faint-focus-color: transparent;
+    -fx-text-fill: #e6e9f5;
+}
+
+.screen {
+    -fx-background-color: radial-gradient(center 30% 20%, radius 90%, #243070 0%, #11142b 55%, #080a18 100%);
+}
+
+.label {
+    -fx-text-fill: #e6e9f5;
+}
+
+.panel {
+    -fx-background-color: rgba(20, 25, 55, 0.92);
+    -fx-background-radius: 14;
+    -fx-border-color: #3b4a8f;
+    -fx-border-radius: 14;
+    -fx-padding: 28;
+}
+
+.title {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffd25a;
+}
+
+.status {
+    -fx-text-fill: #ffb86b;
+}
+
+.button {
+    -fx-background-color: #2f3b7a;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #4152a6;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.button.selected, .button:default {
+    -fx-background-color: #4f8cff;
+}
+
+/* in-game layout */
+
+.top-bar {
+    -fx-background-color: rgba(10, 12, 30, 0.85);
+    -fx-padding: 10 16;
+    -fx-border-color: transparent transparent #2c3570 transparent;
+}
+
+.header-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffd25a;
+}
+
+.phase {
+    -fx-background-color: #2f3b7a;
+    -fx-background-radius: 10;
+    -fx-padding: 3 10;
+}
+
+.message {
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #8a2f3f;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10;
+}
+
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9fb4ff;
+}
+
+.hint {
+    -fx-text-fill: #aab3d6;
+    -fx-font-style: italic;
+}
+
+/* ship board */
+
+.board-label {
+    -fx-text-fill: #7f8bbd;
+    -fx-font-weight: bold;
+    -fx-padding: 0 6;
+}
+
+.cell-empty {
+    -fx-background-color: rgba(79, 140, 255, 0.16);
+    -fx-border-color: rgba(120, 170, 255, 0.45);
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.cell-empty:hover {
+    -fx-background-color: rgba(79, 140, 255, 0.4);
+}
+
+.cell-filled {
+    -fx-cursor: hand;
+}
+
+.cell-filled:hover {
+    -fx-effect: dropshadow(gaussian, #ffd25a, 10, 0.5, 0, 0);
+}
+
+.cell-outside {
+    -fx-background-color: transparent;
+}
+
+.slot {
+    -fx-background-color: rgba(79, 140, 255, 0.12);
+    -fx-border-color: rgba(120, 170, 255, 0.35);
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+}
+
+.slot-selected {
+    -fx-border-color: #ffd25a;
+    -fx-border-width: 2;
+}
+
+.slot-label {
+    -fx-text-fill: #aab3d6;
+    -fx-font-size: 11px;
+}
+
+.pool-tile {
+    -fx-cursor: hand;
+}
+
+.pool-tile:hover {
+    -fx-effect: dropshadow(gaussian, #ffd25a, 10, 0.6, 0, 0);
+}
+
+/* tabs, tables, commands */
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.tab {
+    -fx-background-color: #1e2340;
+}
+
+.tab:selected {
+    -fx-background-color: #2f3b7a;
+}
+
+.tab .tab-label {
+    -fx-text-fill: #e6e9f5;
+}
+
+.table-header {
+    -fx-text-fill: #9fb4ff;
+    -fx-font-weight: bold;
+}
+
+.in-turn {
+    -fx-text-fill: #ffd25a;
+    -fx-font-weight: bold;
+}
+
+.mono {
+    -fx-font-family: "Menlo", "Consolas", monospace;
+}
+
+.command-panel {
+    -fx-padding: 10 16;
+    -fx-background-color: rgba(10, 12, 30, 0.85);
+}
+
+.command-form {
+    -fx-background-color: rgba(47, 59, 122, 0.45);
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+.scroll-pane, .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}

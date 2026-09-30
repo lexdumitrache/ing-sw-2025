@@ -19,7 +19,9 @@ This builds `target/GC06-1.0-Server.jar` and `target/GC06-1.0-Client.jar`.
 `--tcp-port port` will use `port` as the port for TCP connections (1234 if not provided)\
 `--rmi-port port` will use `port` as the port for RMI connections (1099 if not provided)
 ## Client
-`java -jar target/GC06-1.0-Client.jar` will open the TUI client
+`java -jar target/GC06-1.0-Client.jar` will open the graphical client (GUI)
+
+`java -jar target/GC06-1.0-Client.jar --tui` will open the text client (TUI) instead
 ### Options
 `--useRMI` will skip protocol selection and use RMI\
 `--useTCP` will skip protocol selection and use TCP
@@ -32,7 +34,7 @@ This builds `target/GC06-1.0-Server.jar` and `target/GC06-1.0-Client.jar`.
 # Features
 - Trial flight (Volo di Prova)
 - Multiple concurrent games
-- Complete rules, TUI, RMI and socket networking
+- Complete rules, GUI, TUI, RMI and socket networking
 
 ## How to Play – TUI Client Guide
 

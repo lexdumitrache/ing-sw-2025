@@ -11,6 +11,7 @@ import View.States.MenuStates.ChooseActionState;
 import View.States.MenuStates.ActionCreationState;
 import View.States.MenuStates.StopState;
 import View.States.ViewNothingState;
+import View.GUI.GUI;
 import View.TUI;
 import View.View;
 
@@ -51,7 +52,9 @@ public class Client implements Agent {
         final boolean localhost = Utils.getPosition("--localhost", args) != -1;
 
 
-        view = new TUI();
+        final boolean useTUI = Utils.getPosition("--tui", args) != -1;
+
+        view = useTUI ? new TUI() : new GUI();
         client = new Client();
 
         if (useRMI == null) {

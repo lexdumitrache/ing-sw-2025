@@ -55,25 +55,7 @@ public class BuildingState extends State {
     public BuildingState(Controller controller) {
         super(controller);
         MatchLevel matchLevel=controller.getMatchLevel();
-        if(matchLevel== MatchLevel.TRIAL){
-
-            this.validCoordinates.put(5, List.of(7));
-            this.validCoordinates.put(6, List.of(6,7,8));
-            this.validCoordinates.put(7, List.of(5,6,7,8,9));
-            this.validCoordinates.put(8, List.of(5,6,7,8,9));
-            this.validCoordinates.put(9, List.of(5,6,8,9));
-        }
-        else if(matchLevel== MatchLevel.LEVEL2){
-
-            this.validCoordinates.put(5, List.of(6,8));
-            this.validCoordinates.put(6, List.of(5,6,7,8,9));
-            this.validCoordinates.put(7, List.of(4,5,6,7,8,9,10));
-            this.validCoordinates.put(8, List.of(4,5,6,7,8,9,10));
-            this.validCoordinates.put(9, List.of(4,5,6,8,9,10));
-        }
-        else{
-            throw new IllegalArgumentException("Invalid match level");
-        }
+        this.validCoordinates.putAll(ShipBoard.getValidCells(matchLevel));
 
         controller.setQueuedAction(ClientState::net_Start);
     }
