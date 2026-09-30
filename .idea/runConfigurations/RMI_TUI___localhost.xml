@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RMI TUI @ localhost" type="JarApplication" singleton="false">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/target/GC06-1.0-Client.jar" />
+    <option name="PROGRAM_PARAMETERS" value="--useRMI --localhost" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2" />
+  </configuration>
+</component>

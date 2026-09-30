@@ -1,0 +1,927 @@
+[
+  {
+    "id": 1,
+    "type": "OpenSpace",
+    "level": "LEARNER",
+    "imagePath": "src/main/resources/pics/cards/1.png"
+  },
+  {
+    "id": 2,
+    "type": "MeteorSwarm",
+    "level": "LEARNER",
+    "meteors": [
+      {
+        "large": true,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "left"
+      },
+      {
+        "large": false,
+        "direction": "right"
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/2.png"
+  },
+  {
+    "id": 3,
+    "type": "Planets",
+    "level": "LEARNER",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "RED",
+          "RED"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "RED",
+          "BLUE",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "Planet3",
+        "goods": [
+          "YELLOW"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 2
+    },
+    "imagePath": "src/main/resources/pics/cards/3.png"
+  },
+  {
+    "id": 4,
+    "type": "Stardust",
+    "level": "LEARNER",
+    "imagePath": "src/main/resources/pics/cards/4.png"
+  },
+  {
+    "id": "5",
+    "type": "Smugglers",
+    "level": "LEARNER",
+    "power": 4,
+    "penalty": {
+      "stealGoodsOnLoss": 2,
+      "days": 1
+    },
+    "rewardGoods": [
+      "YELLOW",
+      "GREEN",
+      "BLUE"
+    ],
+    "imagePath": "src/main/resources/pics/cards/5.jpg"
+  },
+  {
+    "id": "6",
+    "type": "CombatZone",
+    "level": "LEARNER",
+    "lines": [
+      {
+        "criteria": "MAN_POWER",
+        "penalty": {
+          "type": "DaysPenalty",
+          "value": 3
+        }
+      },
+      {
+        "criteria": "ENGINE_POWER",
+        "penalty": {
+          "type": "CrewPenalty",
+          "value": 2
+        }
+      },
+      {
+        "criteria": "FIRE_POWER",
+        "penalty": {
+          "shots": [
+            {
+              "isLarge": false,
+              "direction": "rear"
+            },
+            {
+              "isLarge": true,
+              "direction": "rear"
+            }
+          ]
+        }
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/6.jpg"
+  },
+  {
+    "id": "7",
+    "type": "AbandonedShip",
+    "level": "LEARNER",
+    "crewRequired": 3,
+    "reward": {
+      "credits": 4
+    },
+    "days": 1,
+    "imagePath": "src/main/resources/pics/cards/7.jpg"
+  },
+  {
+    "id": "8",
+    "type": "AbandonedStation",
+    "level": "LEARNER",
+    "crewRequired": 5,
+    "days": 1,
+    "reward": {
+      "goods": [
+        "YELLOW",
+        "GREEN"
+      ]
+    },
+    "imagePath": "src/main/resources/pics/cards/8.jpg"
+  },
+  {
+    "id": 9,
+    "type": "OpenSpace",
+    "level": "LEVEL_ONE",
+    "imagePath": "src/main/resources/pics/cards/9.png"
+  },
+  {
+    "id": 10,
+    "type": "OpenSpace",
+    "level": "LEVEL_ONE",
+    "imagePath": "src/main/resources/pics/cards/10.png"
+  },
+  {
+    "id": 11,
+    "type": "OpenSpace",
+    "level": "LEVEL_ONE",
+    "imagePath": "src/main/resources/pics/cards/11.png"
+  },
+  {
+    "id": 12,
+    "type": "Planets",
+    "level": "LEVEL_ONE",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "RED",
+          "GREEN",
+          "BLUE",
+          "BLUE",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "RED",
+          "YELLOW",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "Planet3",
+        "goods": [
+          "RED",
+          "BLUE",
+          "BLUE",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "Planet4",
+        "goods": [
+          "RED",
+          "GREEN"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 3
+    },
+    "imagePath": "src/main/resources/pics/cards/12.png"
+  },
+  {
+    "id": 13,
+    "type": "Planets",
+    "level": "LEVEL_ONE",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "YELLOW",
+          "GREEN",
+          "BLUE",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "YELLOW",
+          "YELLOW"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 3
+    },
+    "imagePath": "src/main/resources/pics/cards/13.png"
+  },
+  {
+    "id": 14,
+    "type": "Planets",
+    "level": "LEVEL_ONE",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "GREEN",
+          "GREEN"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "YELLOW"
+        ]
+      },
+      {
+        "name": "Planet3",
+        "goods": [
+          "BLUE",
+          "BLUE",
+          "BLUE"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 1
+    },
+    "imagePath": "src/main/resources/pics/cards/14.png"
+  },
+  {
+    "id": 15,
+    "type": "MeteorSwarm",
+    "level": "LEVEL_ONE",
+    "meteors": [
+      {
+        "large": false,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "left"
+      },
+      {
+        "large": false,
+        "direction": "right"
+      },
+      {
+        "large": false,
+        "direction": "rear"
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/15.png"
+  },
+  {
+    "id": 16,
+    "type": "MeteorSwarm",
+    "level": "LEVEL_ONE",
+    "meteors": [
+      {
+        "large": true,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "front"
+      },
+      {
+        "large": true,
+        "direction": "front"
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/16.png"
+  },
+  {
+    "id": "17",
+    "type": "AbandonedShip",
+    "level": "LEVEL_ONE",
+    "crewRequired": 2,
+    "reward": {
+      "credits": 3
+    },
+    "days": 1,
+    "imagePath": "src/main/resources/pics/cards/17.jpg"
+  },
+  {
+    "id": "18",
+    "type": "AbandonedStation",
+    "level": "LEVEL_ONE",
+    "crewRequired": 6,
+    "days": 1,
+    "reward": {
+      "goods": [
+        "RED",
+        "RED"
+      ]
+    },
+    "imagePath": "src/main/resources/pics/cards/18.jpg"
+  },
+  {
+    "id": "19",
+    "type": "Slavers",
+    "level": "LEVEL_ONE",
+    "power": 6,
+    "penalty": {
+      "crewLoss": 3,
+      "days": 1
+    },
+    "reward": {
+      "credits": 5
+    },
+    "imagePath": "src/main/resources/pics/cards/19.jpg"
+  },
+  {
+    "id": "20",
+    "type": "Pirates",
+    "level": "LEVEL_ONE",
+    "power": 5,
+    "penalty": {
+      "shots": [
+        {
+          "isLarge": false,
+          "direction": "FRONT"
+        },
+        {
+          "isLarge": true,
+          "direction": "FRONT"
+        },
+        {
+          "isLarge": false,
+          "direction": "FRONT"
+        }
+      ],
+      "days": 1
+    },
+    "reward": {
+      "credits": 4
+    },
+    "imagePath": "src/main/resources/pics/cards/20.jpg"
+  },
+  {
+    "id": 21,
+    "type": "OpenSpace",
+    "level": "LEVEL_TWO",
+    "imagePath": "src/main/resources/pics/cards/21.png"
+  },
+  {
+    "id": 22,
+    "type": "OpenSpace",
+    "level": "LEVEL_TWO",
+    "imagePath": "src/main/resources/pics/cards/22.png"
+  },
+  {
+    "id": 23,
+    "type": "OpenSpace",
+    "level": "LEVEL_TWO",
+    "imagePath": "src/main/resources/pics/cards/23.png"
+  },
+  {
+    "id": 24,
+    "type": "MeteorSwarm",
+    "level": "LEVEL_TWO",
+    "meteors": [
+      {
+        "large": false,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "front"
+      },
+      {
+        "large": true,
+        "direction": "left"
+      },
+      {
+        "large": false,
+        "direction": "left"
+      },
+      {
+        "large": false,
+        "direction": "left"
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/24.png"
+  },
+  {
+    "id": 25,
+    "type": "MeteorSwarm",
+    "level": "LEVEL_TWO",
+    "meteors": [
+      {
+        "large": true,
+        "direction": "front"
+      },
+      {
+        "large": true,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "rear"
+      },
+      {
+        "large": false,
+        "direction": "rear"
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/25.png"
+  },
+  {
+    "id": 26,
+    "type": "MeteorSwarm",
+    "level": "LEVEL_TWO",
+    "meteors": [
+      {
+        "large": false,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "front"
+      },
+      {
+        "large": true,
+        "direction": "right"
+      },
+      {
+        "large": false,
+        "direction": "right"
+      },
+      {
+        "large": false,
+        "direction": "right"
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/26.png"
+  },
+  {
+    "id": 27,
+    "type": "Planets",
+    "level": "LEVEL_TWO",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "RED",
+          "RED",
+          "RED",
+          "YELLOW"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "RED",
+          "RED",
+          "GREEN",
+          "GREEN"
+        ]
+      },
+      {
+        "name": "Planet3",
+        "goods": [
+          "RED",
+          "BLUE",
+          "BLUE",
+          "BLUE",
+          "BLUE"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 4
+    },
+    "imagePath": "src/main/resources/pics/cards/27.png"
+  },
+  {
+    "id": 28,
+    "type": "Planets",
+    "level": "LEVEL_TWO",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "RED",
+          "RED"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "GREEN",
+          "GREEN",
+          "GREEN",
+          "GREEN"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 3
+    },
+    "imagePath": "src/main/resources/pics/cards/28.png"
+  },
+  {
+    "id": 29,
+    "type": "Planets",
+    "level": "LEVEL_TWO",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "RED",
+          "YELLOW"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "YELLOW",
+          "GREEN",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "Planet3",
+        "goods": [
+          "GREEN",
+          "GREEN"
+        ]
+      },
+      {
+        "name": "Planet4",
+        "goods": [
+          "YELLOW"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 2
+    },
+    "imagePath": "src/main/resources/pics/cards/29.png"
+  },
+  {
+    "id": 30,
+    "type": "Planets",
+    "level": "LEVEL_TWO",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "GREEN",
+          "GREEN",
+          "GREEN",
+          "GREEN"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "YELLOW",
+          "YELLOW"
+        ]
+      },
+      {
+        "name": "Planet3",
+        "goods": [
+          "BLUE",
+          "BLUE",
+          "BLUE",
+          "BLUE"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 3
+    },
+    "imagePath": "src/main/resources/pics/cards/30.png"
+  },
+  {
+    "id": "31",
+    "type": "AbandonedShip",
+    "level": "LEVEL_TWO",
+    "crewRequired": 4,
+    "reward": {
+      "credits": 6
+    },
+    "days": 1,
+    "imagePath": "src/main/resources/pics/cards/31.jpg"
+  },
+  {
+    "id": "32",
+    "type": "AbandonedShip",
+    "level": "LEVEL_TWO",
+    "crewRequired": 5,
+    "reward": {
+      "credits": 8
+    },
+    "days": 2,
+    "imagePath": "src/main/resources/pics/cards/32.jpg"
+  },
+  {
+    "id": "33",
+    "type": "AbandonedStation",
+    "level": "LEVEL_TWO",
+    "crewRequired": 7,
+    "days": 1,
+    "reward": {
+      "goods": [
+        "RED",
+        "YELLOW"
+      ]
+    },
+    "imagePath": "src/main/resources/pics/cards/33.jpg"
+  },
+  {
+    "id": "34",
+    "type": "AbandonedStation",
+    "level": "LEVEL_TWO",
+    "crewRequired": 8,
+    "days": 2,
+    "reward": {
+      "goods": [
+        "YELLOW",
+        "YELLOW",
+        "GREEN"
+      ]
+    },
+    "imagePath": "src/main/resources/pics/cards/34.jpg"
+  },
+  {
+    "id": 35,
+    "type": "Stardust",
+    "level": "LEVEL_TWO",
+    "imagePath": "src/main/resources/pics/cards/35.png"
+  },
+  {
+    "id": "36",
+    "type": "CombatZone",
+    "level": "LEVEL_TWO",
+    "lines": [
+      {
+        "criteria": "FIRE_POWER",
+        "penalty": {
+          "type": "DaysPenalty",
+          "value": 4
+        }
+      },
+      {
+        "criteria": "ENGINE_POWER",
+        "penalty": {
+          "type": "GoodsPenalty",
+          "value": 3
+        }
+      },
+      {
+        "criteria": "MAN_POWER",
+        "penalty": {
+          "shots": [
+            {
+              "isLarge": false,
+              "direction": "front"
+            },
+            {
+              "isLarge": false,
+              "direction": "left"
+            },
+            {
+              "isLarge": false,
+              "direction": "right"
+            },
+            {
+              "isLarge": true,
+              "direction": "rear"
+            }
+          ]
+        }
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/36.jpg"
+  },
+  {
+    "id": "37",
+    "type": "Epidemic",
+    "level": "LEVEL_TWO",
+    "imagePath": "src/main/resources/pics/cards/37.jpg"
+  },
+  {
+    "id": "38",
+    "type": "Slavers",
+    "level": "LEVEL_TWO",
+    "power": 7,
+    "penalty": {
+      "crewLoss": 4,
+      "days": 2
+    },
+    "reward": {
+      "credits": 8
+    },
+    "imagePath": "src/main/resources/pics/cards/38.jpg"
+  },
+  {
+    "id": "39",
+    "type": "Pirates",
+    "level": "LEVEL_TWO",
+    "power": 6,
+    "penalty": {
+      "shots": [
+        {
+          "isLarge": true,
+          "direction": "front"
+        },
+        {
+          "isLarge": false,
+          "direction": "front"
+        },
+        {
+          "isLarge": true,
+          "direction": "front"
+        }
+      ],
+      "days": 2
+    },
+    "reward": {
+      "credits": 7
+    },
+    "imagePath": "src/main/resources/pics/cards/39.jpg"
+  },
+  {
+    "id": "40",
+    "type": "Smugglers",
+    "level": "LEVEL_TWO",
+    "power": 8,
+    "penalty": {
+      "stealGoodsOnLoss": 3,
+      "days": 1
+    },
+    "rewardGoods": [
+      "RED",
+      "YELLOW",
+      "YELLOW"
+    ],
+
+    "imagePath": "src/main/resources/pics/cards/40.jpg"
+  },
+  {
+    "id": 41,
+    "type": "OpenSpace",
+    "level": "LEVEL_ONE",
+    "imagePath": "src/main/resources/pics/cards/1.png"
+  },
+  {
+    "id": 42,
+    "type": "MeteorSwarm",
+    "level": "LEVEL_ONE",
+    "meteors": [
+      {
+        "large": true,
+        "direction": "front"
+      },
+      {
+        "large": false,
+        "direction": "left"
+      },
+      {
+        "large": false,
+        "direction": "right"
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/2.png"
+  },
+  {
+    "id": 43,
+    "type": "Planets",
+    "level": "LEVEL_ONE",
+    "planets": [
+      {
+        "name": "Planet1",
+        "goods": [
+          "RED",
+          "RED"
+        ]
+      },
+      {
+        "name": "Planet2",
+        "goods": [
+          "RED",
+          "BLUE",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "Planet3",
+        "goods": [
+          "YELLOW"
+        ]
+      }
+    ],
+    "landingPenalty": {
+      "value": 2
+    },
+    "imagePath": "src/main/resources/pics/cards/3.png"
+  },
+  {
+    "id": 44,
+    "type": "Stardust",
+    "level": "LEVEL_ONE",
+    "imagePath": "src/main/resources/pics/cards/4.png"
+  },
+  {
+    "id": "45",
+    "type": "Smugglers",
+    "level": "LEVEL_ONE",
+    "power": 4,
+    "penalty": {
+      "stealGoodsOnLoss": 2,
+      "days": 1
+    },
+    "rewardGoods": [
+      "YELLOW",
+      "GREEN",
+      "BLUE"
+    ],
+    "imagePath": "src/main/resources/pics/cards/5.jpg"
+  },
+  {
+    "id": "46",
+    "type": "CombatZone",
+    "level": "LEVEL_ONE",
+    "lines": [
+      {
+        "criteria": "MAN_POWER",
+        "penalty": {
+          "type": "DaysPenalty",
+          "value": 3
+        }
+      },
+      {
+        "criteria": "ENGINE_POWER",
+        "penalty": {
+          "type": "CrewPenalty",
+          "value": 2
+        }
+      },
+      {
+        "criteria": "FIRE_POWER",
+        "penalty": {
+        "shots": [
+            {
+              "isLarge": false,
+              "direction": "rear"
+            },
+            {
+              "isLarge": true,
+              "direction": "rear"
+            }
+          ]
+        }
+      }
+    ],
+    "imagePath": "src/main/resources/pics/cards/6.jpg"
+  },
+  {
+    "id": "47",
+    "type": "AbandonedShip",
+    "level": "LEVEL_ONE",
+    "crewRequired": 3,
+    "reward": {
+      "credits": 4
+    },
+    "days": 1,
+    "imagePath": "src/main/resources/pics/cards/7.jpg"
+  },
+  {
+    "id": "48",
+    "type": "AbandonedStation",
+    "level": "LEVEL_ONE",
+    "crewRequired": 5,
+    "days": 1,
+    "reward": {
+      "goods": [
+        "YELLOW",
+        "GREEN"
+      ]
+    },
+    "imagePath": "src/main/resources/pics/cards/8.jpg"
+  }
+]
