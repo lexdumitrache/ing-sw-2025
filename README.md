@@ -1,84 +1,126 @@
 # Galaxy Trucker
 
-A Java implementation of the board game Galaxy Trucker, playable over the network (RMI or TCP sockets) through a text-based client.
+A Java implementation of the board game **Galaxy Trucker**: build a spaceship out of sewer-pipe tiles against the clock, then fly it through meteors, pirates and abandoned stations, and try to arrive with more credits than everyone else.
 
-# Requirements
+Play over the network with friends, through a graphical client or a text client.
+
+![Building a Level II ship](docs/screenshots/building.png)
+
+## Features
+
+- **Two game modes:** the *Trial flight* and the full *Level II* game
+- **Complete rules:** building phase with hourglass, pre-built ships, crew and alien placement, all adventure cards (Open Space, Planets, Pirates, Smugglers, Slavers, Meteor Swarm, Combat Zone, Epidemic, Stardust, Abandoned Ship and Station), final rewards
+- **Graphical client** (JavaFX) using the original board and tile artwork
+- **Text client** that works in any terminal
+- **Networking** over TCP sockets or Java RMI, with several games running on the same server
+
+## Quick start
+
+### Requirements
+
 - JDK 23 or newer
-- Maven
+- Maven 3.9+
 
-# Compile
-`mvn clean package`
+On macOS, `brew install openjdk maven` installs both. If `java -version` still shows an older Java, run the jars with `/opt/homebrew/opt/openjdk/bin/java` or put that folder first in your `PATH`.
 
-This builds `target/GC06-1.0-Server.jar` and `target/GC06-1.0-Client.jar`.
-# Run
-## Server
-`java -jar target/GC06-1.0-Server.jar` will start the server making you choose the network interface and on default TCP and RMI ports
-### Options
-`--hostname name` will use `name` as hostname\
+### Build
 
-`--tcp-port port` will use `port` as the port for TCP connections (1234 if not provided)\
-`--rmi-port port` will use `port` as the port for RMI connections (1099 if not provided)
-## Client
-`java -jar target/GC06-1.0-Client.jar` will open the graphical client (GUI)
+```bash
+mvn clean package
+```
 
-`java -jar target/GC06-1.0-Client.jar --tui` will open the text client (TUI) instead
-### Options
-`--useRMI` will skip protocol selection and use RMI\
-`--useTCP` will skip protocol selection and use TCP
-#### Modifier
-`--localhost` is a modifier of the previous two, and it will try to connect to localhost:defaultport automatically
+This runs the test suite and creates two jars in `target/`: `GC06-1.0-Server.jar` and `GC06-1.0-Client.jar`. Add `-DskipTests` to build faster.
 
-# Code coverage
-`mvn clean verify` and then open `target/site/jacoco/index.html`
+### Play
 
-# Features
-- Trial flight (Volo di Prova)
-- Multiple concurrent games
-- Complete rules, GUI, TUI, RMI and socket networking
+Start a server:
 
-## How to Play – TUI Client Guide
+```bash
+java -jar target/GC06-1.0-Server.jar --hostname localhost
+```
 
-This guide will help you get the most out of the TUI (Text User Interface) client.
+Then start one client per player (from other terminals or other computers):
 
-### Basic Commands
+```bash
+java -jar target/GC06-1.0-Client.jar
+```
 
-In general, commands are structured with an **arguments list** that you can fill in one at a time:
+In the client, connect to the server, choose a name, and create or join a game. The player who created the game starts it once at least two players have joined.
 
-![Commands Example](https://github.com/user-attachments/assets/2f180eea-d2ec-4cc2-86c5-072490cdd7d7)
+To play across computers, start the server with your machine's address instead of `localhost` (or without `--hostname` to choose a network interface), and connect the clients to that address.
 
-Alternatively, you can input the full command with all necessary arguments in one line, for example:
+## Command-line options
+
+| Program | Option | Effect |
+|---|---|---|
+| Server | `--hostname <name>` | Address to listen on (otherwise you choose a network interface) |
+| Server | `--tcp-port <port>` | Port for TCP clients (default `1234`) |
+| Server | `--rmi-port <port>` | Port for RMI clients (default `1099`) |
+| Client | `--tui` | Use the text client instead of the graphical one |
+| Client | `--useTCP` / `--useRMI` | Skip the protocol choice |
+| Client | `--localhost` | With `--useTCP` or `--useRMI`: connect straight to `localhost` on the default port |
+
+The server also reads commands from its console: `help`, `games`, `list`, `send <message>` and `stop`.
+
+## How to play (graphical client)
+
+### Building
+
+Pick tiles from the **Tiles** tab: face-down tiles are revealed when you take them. The tile appears **in hand**; rotate it with ⟲ ⟳ and click an empty cell next to your ship to place it. You can keep up to two tiles aside with **Reserve**.
+
+In Level II you can also look at the adventure card decks you will fly through. If you are short on time, **Pre Built Ship** gives you a ready-made ship.
+
+![Looking at a card deck](docs/screenshots/card-deck.png)
+
+When you are done, press **Finish Building** and choose your starting position. In Level II you then decide where your crew and aliens go: click a cabin and choose **Place humans** or an alien.
+
+### Flight
+
+The leader draws the next adventure card. The **Card** tab shows the card and what it asks for; the buttons at the bottom show exactly what you can do right now.
+
+![Resolving a Pirates card](docs/screenshots/flight-card.png)
+
+Click a tile of your ship to act on it: use a battery, lose a crew member, load, move or throw away goods, or remove a damaged tile. Goods offered by a card appear under your ship: select one, then click a cargo hold to load it.
+
+The **Flight board** tab shows where every rocket is, and who is acting.
+
+![The Level II flight board](docs/screenshots/flight-board.png)
+
+## Text client
+
+Run the client with `--tui`. Commands are typed by name, and missing arguments are asked for one at a time, or can be given in one line:
 
 ```
 declarefirepower 7
+placecomponent HAND 6 7 UP
 ```
 
----
+- **Origin:** `HAND`, `FIRST_RESERVED`, `SECOND_RESERVED`
+- **Orientation:** `UP`, `DOWN`, `LEFT`, `RIGHT`
 
-### Building Phase
+Ship coordinates use the numbers printed on the board: rows 5–9, columns 4–10.
 
-During the **building phase**, all standard commands are available, along with visual aids to help with placement and planning:
+## Project structure
 
-![Building Phase](https://github.com/user-attachments/assets/51953cf6-ce4c-4666-b484-a56b7d76f1cc)
+```
+src/main/java
+├── Model/        game state: ships, tiles, cards, flight board
+├── Controller/   game rules as a state machine, one state per phase and card step
+├── Networking/   TCP and RMI transport, messages
+└── View/         client: states, actions, text client (TUI) and graphical client (GUI)
+```
 
-Below the ship layout, you’ll also find a small **legend** that explains the symbols used.
+The client never changes the game directly: every action is a command sent to the server, which validates it and sends the updated game back to every player. UML class diagrams and network sequence diagrams are in [`docs/diagrams`](docs/diagrams).
 
-**Important Enums:**
+## Development
 
-**Origin** : Hand, First_Reserved, Second_Reserved
+```bash
+mvn test      # run the ~2000 unit tests
+mvn verify    # tests + coverage report in target/site/jacoco/index.html
+```
 
-**Orientation**: Up, Down, Left, Right
+## Credits
 
-### Flight Phase
+Galaxy Trucker is a board game by Vlaada Chvátil, published by Czech Games Edition. The board and tile artwork belongs to them and is used here for a non-commercial project.
 
-In the **flight phase**, additional visualizers become available to assist during gameplay. For example:
-
-![Flight Phase](https://github.com/user-attachments/assets/3d9e9ed7-9520-4360-919e-1647fea6e36b)
-
-The current turn is displayed under the flight board.
-When resolving a card, an arrow highlights the active player for that turn.
-(Indexes are from 0)
-
-## UML
-The low level UML diagrams are in [`docs/diagrams`](docs/diagrams), divided into Model, View, Controller and Networking, plus the network protocol sequence diagrams in [`docs/diagrams/network`](docs/diagrams/network).
-
-
+This project started as the final team project of the 2025 Software Engineering course at Politecnico di Milano (team GC06), and has been extended since.
