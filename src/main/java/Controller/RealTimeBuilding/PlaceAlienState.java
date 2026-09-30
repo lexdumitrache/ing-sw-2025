@@ -220,7 +220,9 @@ import java.util.Map;
         // and update the playersAlienAvailability map
         CanInsertAliens canInsertAliens = playersAlienAvailability.get(currentPlayer);
 
-        if (type == CrewType.BROWN_ALIEN) {
+        if (type == CrewType.HUMAN) {
+            cabin.setOccupants(Crewmates.DOUBLE_HUMAN);
+        } else if (type == CrewType.BROWN_ALIEN) {
             cabin.setOccupants(Crewmates.BROWN_ALIEN);
             shipBoard.getCondensedShip().getAliens().setBrownAlien(true);
             canInsertAliens.insertedBrown();
