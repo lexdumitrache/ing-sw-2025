@@ -215,10 +215,8 @@ public class CondensedShip implements Serializable, Cloneable {
             if (cabin.getCanContainBrown()) {
                 Coordinates myCoordinates=cabin.getShipBoard().getIndex(cabin);
                 if ((myCoordinates.getI()!=centralCabinCoordinates.getI())||(myCoordinates.getJ()!=centralCabinCoordinates.getJ())) {
-                    System.out.println("Cabin at coordinates (i:"+myCoordinates.getI()+"; j:"+myCoordinates.getJ()+")"+" can contain Brown Alien");
                     return true;
                 }else{
-                    System.out.println("Central Cabin at coordinates (i:"+myCoordinates.getI()+"; j:"+myCoordinates.getJ()+")"+" can't contain Aliens");
                 }
             }
         }
@@ -232,10 +230,8 @@ public class CondensedShip implements Serializable, Cloneable {
             if (cabin.getCanContainPurple()) {
                 Coordinates myCoordinates=cabin.getShipBoard().getIndex(cabin);
                 if ((myCoordinates.getI()!=centralCabinCoordinates.getI())||(myCoordinates.getJ()!=centralCabinCoordinates.getJ())) {
-                    System.out.println("Cabin at coordinates (i:"+myCoordinates.getI()+"; j:"+myCoordinates.getJ()+")"+" can contain Purple Alien");
                     return true;
                 }else{
-                    System.out.println("Central Cabin at coordinates (i:"+myCoordinates.getI()+"; j:"+myCoordinates.getJ()+")"+" can't contain Aliens");
                 }
             }
         }

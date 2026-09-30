@@ -309,24 +309,6 @@ public class CommandTest {
         TestCommand specialCommand = new TestCommand("Player\t\n\r", 1);
         assertEquals("Player\t\n\r", specialCommand.getPlayerName());
     }
-//
-//    @Test
-//    public void testCommandParameterConsistency() {
-//        // Test that parameters remain consistent after multiple operations
-//        command.setPlayerName("TestPlayer1");
-//        command.setGameID(100);
-//
-//        assertEquals("TestPlayer1", command.getPlayerName());
-//        assertEquals(100, command.getGameID());
-//
-//        command.setPlayerName("TestPlayer2");
-//        assertEquals("TestPlayer2", command.getPlayerName());
-//        assertEquals(100, command.getGameID()); // Should remain unchanged
-//
-//        command.setGameID(200);
-//        assertEquals("TestPlayer2", command.getPlayerName()); // Should remain unchanged
-//        assertEquals(200, command.getGameID());
-//    }
 
     @Test
     public void testCommandExecutionOrder() throws Exception {

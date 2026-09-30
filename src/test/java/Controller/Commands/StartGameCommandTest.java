@@ -65,12 +65,6 @@ public class StartGameCommandTest {
         assertNotNull(level2Command);
     }
 
-//    @Test
-//    public void testStartGameCommandInheritance() {
-//        assertTrue(startGameCommand instanceof Command);
-//        assertTrue(startGameCommand instanceof StartGameCommand);
-//    }
-
     @Test
     public void testStartGameCommandGetLevel() {
         assertNotNull(startGameCommand);
@@ -110,14 +104,6 @@ public class StartGameCommandTest {
         // Second execution should fail as game already started
         assertThrows(InvalidCommand.class, () -> startGameCommand.execute(controller));
     }
-
-//    @Test
-//    public void testStartGameCommandWithDifferentGameID() throws Exception {
-//        StartGameCommand differentGameCommand = new StartGameCommand("Anna");
-//
-//        // Should still work as it calls controller.startGame()
-//        differentGameCommand.execute(controller);
-//    }
 
     @Test
     public void testStartGameCommandParameterModification() throws Exception {

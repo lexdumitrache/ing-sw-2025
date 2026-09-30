@@ -9,7 +9,6 @@ import Networking.Network;
 import Networking.RMI.RMIConnectionHandler;
 import Networking.TCP.TCPConnectionHandler;
 import Networking.Utils;
-import javafx.util.Pair;
 
 import java.io.IOException;
 import java.util.*;
@@ -17,7 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Server implements Agent {
     public static Server server;
-    private static final Map<String, Pair<String, Runnable>> availableActions = new HashMap<>();
+
+    private record ConsoleAction(String description, Runnable action) {}
+    private static final Map<String, ConsoleAction> availableActions = new HashMap<>();
     private final Set<Network> uninitialized = new HashSet<>();
     private final Map<Network, String> players = new ConcurrentHashMap<>();
     private final Map<Integer, Controller> games = new ConcurrentHashMap<>();
@@ -61,24 +62,30 @@ public class Server implements Agent {
     public void run() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Dummy server");
+        System.out.println("Server started");
         System.out.println("Get available commands by typing \"help\"");
 
-        availableActions.put("help", new Pair<>("prints this message", this::help));
-        availableActions.put("list", new Pair<>("prints all players", this::list));
-        availableActions.put("games", new Pair<>("prints all games", this::games));
-        availableActions.put("send", new Pair<>("sends a message to all networks", this::send));
-        availableActions.put("stop", new Pair<>("stops all network connections", ()->{}));
+        availableActions.put("help", new ConsoleAction("prints this message", this::help));
+        availableActions.put("list", new ConsoleAction("prints all players", this::list));
+        availableActions.put("games", new ConsoleAction("prints all games", this::games));
+        availableActions.put("send", new ConsoleAction("sends a message to all networks", this::send));
+        availableActions.put("stop", new ConsoleAction("stops all network connections", ()->{}));
 
         do {
             System.out.print("> ");
             String line = scanner.nextLine();
             command = line.split(" ", 2);
 
-            try{
-                availableActions.get(command[0]).getValue().run();
-            }catch(NullPointerException e){
+            final ConsoleAction consoleAction = availableActions.get(command[0]);
+            if(consoleAction == null){
                 System.out.println("Unknown command: " + command[0]);
+                continue;
+            }
+
+            try{
+                consoleAction.action().run();
+            }catch(RuntimeException e){
+                System.out.println("Command failed: " + e);
             }
         } while (!command[0].equalsIgnoreCase("stop"));
     }
@@ -89,7 +96,7 @@ public class Server implements Agent {
 
     public void help (){
         for (String command : availableActions.keySet()) {
-            System.out.println(command + ": " + availableActions.get(command).getKey());
+            System.out.println(command + ": " + availableActions.get(command).description());
         }
     }
 
@@ -98,6 +105,11 @@ public class Server implements Agent {
     }
 
     public void send (){
+        if(command.length < 2 || command[1].isBlank()){
+            System.out.println("Usage: send <message>");
+            return;
+        }
+
         final Set<Network> networks = players.keySet();
         for (Network network : networks) {
             if(!network.send(new PrintMessage(command[1]))){

@@ -1,7 +1,16 @@
+# Galaxy Trucker
+
+A Java implementation of the board game Galaxy Trucker, playable over the network (RMI or TCP sockets) through a text-based client.
+
+# Requirements
+- JDK 23 or newer
+- Maven
+
 # Compile
 `mvn clean package`
+
+This builds `target/GC06-1.0-Server.jar` and `target/GC06-1.0-Client.jar`.
 # Run
-Make sure you're in the main directory
 ## Server
 `java -jar target/GC06-1.0-Server.jar` will start the server making you choose the network interface and on default TCP and RMI ports
 ### Options
@@ -20,10 +29,10 @@ Make sure you're in the main directory
 # Code coverage
 `mvn clean verify` and then open `target/site/jacoco/index.html`
 
-# What we implemented
-- Volo di Prova
-- Partite Multiple
-- Regole complete + TUI + RMI + Socket + 2FA
+# Features
+- Trial flight (Volo di Prova)
+- Multiple concurrent games
+- Complete rules, TUI, RMI and socket networking
 
 ## How to Play – TUI Client Guide
 
@@ -68,6 +77,6 @@ When resolving a card, an arrow highlights the active player for that turn.
 (Indexes are from 0)
 
 ## UML
-For better clarity, the low level UML is divided into Model, View, Controller, Networking
+The low level UML diagrams are in [`docs/diagrams`](docs/diagrams), divided into Model, View, Controller and Networking, plus the network protocol sequence diagrams in [`docs/diagrams/network`](docs/diagrams/network).
 
 

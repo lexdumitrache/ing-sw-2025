@@ -84,12 +84,6 @@ public class PlanetsLandState extends State {
             throw new InvalidContextualAction("The planet is not occupied");
         }
 
-//        Goods rewards = planet.getLandingReward();
-//        if(!rewards.iterator().hasNext()){
-//            
-//            throw new InvalidContextualAction("There are no goods to collect from this planet");
-//        }
-
         if(CargoHoldIndex < 0 || CargoHoldIndex >= cargoHold.getCapacity()) {
             
             throw new InvalidParameters("Invalid cargo hold index");

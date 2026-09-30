@@ -256,25 +256,6 @@ public class ContextTest {
         }
     }
 
-//    @Test
-//    public void testSpecialPlayerManagement() {
-//        Context context = new Context(controller);
-//
-//        assertNull(context.getSpecialPlayers());
-//
-//        if (!controller.getModel().getPlayers().isEmpty()) {
-//            Player player = controller.getModel().getPlayers().get(0);
-//            context.addSpecialPlayer(player);
-//
-//            assertNotNull(context.getSpecialPlayers());
-//            assertEquals(1, context.getSpecialPlayers().size());
-//            assertTrue(context.getSpecialPlayers().contains(player));
-//
-//            context.removeSpecialPlayer(player);
-//            assertEquals(0, context.getSpecialPlayers().size());
-//        }
-//    }
-
     @Test
     public void testCrewmateManagement() {
         try {
@@ -362,25 +343,6 @@ public class ContextTest {
             assertTrue(true);
         }
     }
-//
-//    @Test
-//    public void testGettersAndSetters() {
-//        Context context = new Context(controller);
-//
-//        assertEquals(controller, context.getController());
-//        assertNotNull(context.getPlayers());
-//
-//        // Test default values
-//        assertEquals(0, context.getCrewmates());
-//        assertEquals(0, context.getPower());
-//        assertEquals(0, context.getRequiredGoods());
-//        assertEquals(0, context.getCredits());
-//        assertEquals(0, context.getDaysLost());
-//        assertNull(context.getGoods());
-//        assertNull(context.getProjectiles());
-//        assertNull(context.getPlanets());
-//        assertNull(context.getSpecialPlayers());
-//    }
 
     @Test
     public void testRenderMethod() {

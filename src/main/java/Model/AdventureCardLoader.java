@@ -7,12 +7,8 @@ import Model.Ship.Components.SpaceshipComponent;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import Controller.Enums.MatchLevel;
 
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +21,7 @@ import java.util.stream.Collectors;
 public class AdventureCardLoader {
 
     private static List<AdventureCardFilip> testCards = null;
-    private static final String ADVENTURE_CARD_PATH = "src/main/resources/adventure_cards.json";
+    private static final String ADVENTURE_CARD_PATH = "adventure_cards.json";
 
     /**
      * Injects test cards for testing purposes.
@@ -51,25 +47,14 @@ public class AdventureCardLoader {
      * @return list of parsed AdventureCardFilip objects
      */
     public static List<AdventureCardFilip> loadCards() {
-//        try {
-//            InputStream inputStream = AdventureCardLoader.class.getClassLoader().getResourceAsStream(resourcePath);
-//            if (inputStream == null) {
-//                throw new IllegalArgumentException("File not found: " + resourcePath);
-//            }
-//
-//            InputStreamReader reader = new InputStreamReader(inputStream);
-//            JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
-//            List<AdventureCardFilip> cards = new ArrayList<>();
-
-        try (FileReader reader = new FileReader(ADVENTURE_CARD_PATH)) {
-            JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
+        try {
+            JsonArray array = JsonResource.readArray(ADVENTURE_CARD_PATH);
             List<AdventureCardFilip> cards = new ArrayList<>();
 
             for (JsonElement element : array) {
                 JsonObject obj = element.getAsJsonObject();
                 cards.add(AdventureCardFactory.fromJson(obj));
             }
-            System.out.println(cards.size());
             return cards;
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,13 +95,11 @@ public class AdventureCardLoader {
                         .filter(card -> card.getLevel() == CardLevel.LEVEL_ONE)
                         .collect(Collectors.toList());
 
-                System.out.println(level1Cards.size());
-                        
+
                 List<AdventureCardFilip> level2Cards = allCards.stream()
                         .filter(card -> card.getLevel() == CardLevel.LEVEL_TWO)
                         .collect(Collectors.toList());
 
-                System.out.println(level2Cards.size());
 
                 List<AdventureCardFilip> combined = new ArrayList<>();
                 combined.addAll(level1Cards);

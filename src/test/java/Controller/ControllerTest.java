@@ -337,31 +337,32 @@ public class ControllerTest {
 
     @Test
     public void testDequeueCommandBlocking() {
-        // Test that dequeueCommand blocks when queue is empty
-        Thread testThread = new Thread(() -> {
-            Command command = controller.dequeueCommand();
-            assertNotNull(command);
-        });
-        
+        // Test that dequeueCommand blocks when queue is empty and that an interrupt releases it.
+        // (Enqueuing a command is not a reliable way to unblock it: the controller's own thread competes for it.)
+        final Command[] result = { new LoginCommand("placeholder") };
+        Thread testThread = new Thread(() -> result[0] = controller.dequeueCommand());
+
         testThread.start();
-        
+
         // Give thread time to start and block
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        
-        // Add command to unblock
-        controller.enqueueCommand(new LoginCommand("TestPlayer"));
-        
+
+        assertTrue(testThread.isAlive());
+
+        testThread.interrupt();
+
         try {
             testThread.join(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        
+
         assertFalse(testThread.isAlive());
+        assertNull(result[0]);
     }
 
     @Test

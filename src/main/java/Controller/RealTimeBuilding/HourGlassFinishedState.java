@@ -53,17 +53,6 @@ public class HourGlassFinishedState extends State {
             throw new InvalidCommand("Player already finished");
         }
 
-//        if(this.getController().getMatchLevel()== MatchLevel.TRIAL){
-//            if(!currentPlayer.getShipBoard().validateShip()){
-//                throw new InvalidCommand("Ship not valid");
-//            }
-//        }
-//  non dovrebe mai trovarsi in questo stato se è in trial
-
-//        SpaceshipComponent oldTile= currentPlayer.getShipBoard().getActiveComponent();
-//        model.addComponent(oldTile);
-//        currentPlayer.getShipBoard().setActiveComponent(null);
-
 
         if(finishedPlayers.containsKey(position)){
             throw new InvalidParameters("Position already occupied");

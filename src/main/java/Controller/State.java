@@ -33,12 +33,10 @@ public abstract class State implements Serializable {
 
     public State(Controller controller) {
         this.controller = controller;
-        System.out.println(this.getClass().getSimpleName());
     }
 
     public State(Context context) {
         this.context = context;
-        System.out.println(this.getClass().getSimpleName());
     }
 
     public void onEnter() {}

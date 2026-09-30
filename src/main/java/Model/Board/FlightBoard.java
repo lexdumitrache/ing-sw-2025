@@ -60,18 +60,6 @@ public class FlightBoard implements Serializable, Cloneable {
      * @throws UnsupportedOperationException always
      */
 
-    public static void main(String[] args) {
-
-        List<AdventureCardFilip> cards = AdventureCardLoader.loadAdventureCards(MatchLevel.LEVEL2, false);
-
-        System.out.println(cards.size());
-        for (AdventureCardFilip card : cards) {
-            card.visualize();
-            System.out.println("\n\n\n\n\n\n");
-        }
-
-    }
-
     public FlightBoard() {
         throw new UnsupportedOperationException("This FlightBoard constructor is no longer accepted");
     }
@@ -223,9 +211,6 @@ public class FlightBoard implements Serializable, Cloneable {
      *         false if the timer is not in the last phase with no time left
      */
     public boolean setUpcomingCardDeck() {
-//        if (timer == null || !(timer.getPhase() == Timer.Phase.LAST_PHASE && timer.getTimeLeft() == 0.0f)) {
-//            return false;
-//        }
         List<AdventureCardFilip> cards = new ArrayList<>();
         upcomingCardDeck = new CardDeck();
         // Aggiungi le carte dei peekableCardDecks

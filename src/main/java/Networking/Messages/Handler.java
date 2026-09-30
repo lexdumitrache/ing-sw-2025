@@ -48,8 +48,9 @@ public class Handler<T extends Agent> extends Thread {
                 try {
                     message.handle(this.reference, this.network);
                 } catch (RuntimeException e) {
+                    // a single bad message must not stop this connection from being served
+                    System.err.println("Error while handling " + message.getClass().getSimpleName());
                     e.printStackTrace(System.err);
-                    return;
                 }
             }
         }

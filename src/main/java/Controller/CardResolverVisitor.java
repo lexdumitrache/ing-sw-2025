@@ -285,7 +285,6 @@ public class CardResolverVisitor {
         in base al loro tipo si perdono giorni di rotta
          */
         // Get players in reverse turn order for Stardust event processing
-        System.out.println("Stardust");
         List<Player> playersReversed = new ArrayList<>(List.of(controller.getModel().getFlightBoard().getTurnOrder()));
         Collections.reverse(playersReversed);
         for(Player p : playersReversed){

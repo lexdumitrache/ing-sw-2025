@@ -77,16 +77,6 @@ public class CombatZone extends AdventureCardFilip implements Iterable<CombatZon
 
                     // 3A) If they gave a "shots" array → ProjectilePenalty
                     if (penObj.has("shots")) {
-//                        List<CannonShot> shots = new ArrayList<>();
-//                        for (JsonElement shotElem : penObj.getAsJsonArray("shots")) {
-//                            JsonObject s    = shotElem.getAsJsonObject();
-//                            boolean   large = s.get("isLarge").getAsBoolean();
-//                            Side dir   = Side.valueOf(
-//                                    s.get("direction").getAsString().toUpperCase()
-//                            );
-//                            shots.add(new CannonShot(large, dir));
-//                        }
-//                        penalty = new CannonShotPenalty(shots);
                         penalty= new CannonShotPenalty(entry);
 
                         // 3B) Otherwise, look for a "type" field and switch on it

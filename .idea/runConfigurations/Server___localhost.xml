@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Server @ localhost" type="JarApplication">
-    <option name="JAR_PATH" value="$PROJECT_DIR$/target/GC06-1.0-Server.jar" />
-    <option name="PROGRAM_PARAMETERS" value="--hostname localhost" />
-    <option name="ALTERNATIVE_JRE_PATH" />
-    <method v="2" />
-  </configuration>
-</component>

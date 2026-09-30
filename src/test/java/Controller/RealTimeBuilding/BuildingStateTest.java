@@ -753,48 +753,6 @@ public class BuildingStateTest {
 
     // ==================== FLIP HOURGLASS TESTS ====================
 
-//    /**
-//     * Test that flipHourGlass is not available in Trial level.
-//     */
-//    @Test
-//    public void testflipHourGlass_NotInTrial() {
-//        Controller controller = TestStateManager.createBuildingWith2PlayersLevel2().getController();
-//        assertDoesNotThrow(() -> controller.flipHourGlass("Anna"));
-//        assertThrows(InvalidCommand.class, () -> controller.flipHourGlass("Anna"));
-//        try {
-//            System.out.println("Sleep for 30 seconds");
-//            Thread.sleep(31000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        assertDoesNotThrow(() -> controller.flipHourGlass("Anna"));
-//        assertThrows(InvalidCommand.class, () -> controller.flipHourGlass("Anna"));
-//        try {
-//            System.out.println("Sleep for 30 seconds");
-//            Thread.sleep(31000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        assertThrows(InvalidCommand.class, () -> controller.flipHourGlass("Anna"));
-//
-//        try{
-//            controller.preBuiltShip("Anna", 0);
-//            controller.finishBuilding("Anna", 1);
-//            assertDoesNotThrow(() -> controller.flipHourGlass("Anna"));
-//            try {
-//                System.out.println("Sleep for 30 seconds");
-//                Thread.sleep(31000);
-//                controller.getComponent("Bob", 1);
-//                assertTrue(controller.getModel().getState() instanceof HourGlassFinishedState);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }catch (Exception e){
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     /**
      * Test that hourglass can only be flipped when finished.
      * Note: This test requires timing mechanisms which might need mocking.
@@ -858,11 +816,6 @@ public class BuildingStateTest {
         // Simulate hourglass finished state
         // This is a conceptual test - actual implementation would depend on the game's hourglass mechanism
 
-        // When hourglass is finished, these commands should cause transition to HourGlassFinishedState
-        // assertThrows(StateTransitionException.class, () -> controller.getComponent("Anna", 0));
-        // assertThrows(StateTransitionException.class, () -> controller.placeComponent("Anna", 5, 5, ComponentOrigin.HAND));
-        // assertThrows(StateTransitionException.class, () -> controller.reserveComponent("Anna"));
-
         // Only FinishBuilding should be accepted
         // assertDoesNotThrow(() -> controller.finishBuilding("Anna", 1));
     }
@@ -910,10 +863,6 @@ public class BuildingStateTest {
     public void testDeleteComponent_ReturnToGameTiles() {
         // This is a conceptual test structure
         // In actual implementation, would need a flight phase trial controller
-
-        // Controller controller = TestStateManager.createFlightPhaseTrial().getController();
-        // Player anna = controller.getModel().getPlayer("Anna");
-        // Game model = controller.getModel();
 
         // Assume Anna has a component at (5, 5)
         // SpaceshipComponent componentToDelete = anna.getShipBoard().getComponent(5, 5);

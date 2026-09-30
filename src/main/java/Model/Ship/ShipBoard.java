@@ -130,11 +130,6 @@ public class ShipBoard implements Serializable, Cloneable {
      * @return true if all cells in the board are null, false otherwise
      */
     public boolean isEmpty() {
-//        for (SpaceshipComponent[] row : components) {
-//            for (SpaceshipComponent c : row) {
-//                if (c != null) return false;
-//            }
-//        }
 
         for(int i=0; i<ROWS; i++){
             for(int j=0; j<COLS; j++){
@@ -367,7 +362,6 @@ public class ShipBoard implements Serializable, Cloneable {
                 ConnectorType nextComponentConnector = nextComponent.getConnectorAt(Side.FRONT);
 
                 if(!connectosAreCompatible(currentComponentConnector, nextComponentConnector)) {
-                    System.out.println("Uncompatible connectors between element at " + (row+5) + ", " + (col+4)+"and element at " + (row+6) + ", " + (col+4));
                     return -1;
                     //-1 makes checkIntegrity return false,
                     // this is not mandatory for ship integrity, but it's a simple check that is useful for validation
@@ -385,7 +379,6 @@ public class ShipBoard implements Serializable, Cloneable {
                 ConnectorType currentComponentConnector = currentComponent.getConnectorAt(Side.FRONT);
                 ConnectorType nextComponentConnector = nextComponent.getConnectorAt(Side.REAR);
                 if(!connectosAreCompatible(currentComponentConnector, nextComponentConnector)) {
-                    System.out.println("Uncompatible connectors between element at " + (row+5) + ", " + (col+4)+"and element at " + (row+4) + ", " + (col+4));
                     return -1;
                     //-1 makes checkIntegrity return false,
                     // this is not mandatory for ship integrity, but it's a simple check that is useful for validation
@@ -403,7 +396,6 @@ public class ShipBoard implements Serializable, Cloneable {
                 ConnectorType currentComponentConnector = currentComponent.getConnectorAt(Side.RIGHT);
                 ConnectorType nextComponentConnector = nextComponent.getConnectorAt(Side.LEFT);
                 if(!connectosAreCompatible(currentComponentConnector, nextComponentConnector)) {
-                    System.out.println("Uncompatible connectors between element at " + (row+5) + ", " + (col+4)+"and element at " + (row+5) + ", " + (col+5));
                     return -1;
                     //-1 makes checkIntegrity return false,
                     // this is not mandatory for ship integrity, but it's a simple check that is useful for validation
@@ -422,7 +414,6 @@ public class ShipBoard implements Serializable, Cloneable {
                 ConnectorType currentComponentConnector = currentComponent.getConnectorAt(Side.LEFT);
                 ConnectorType nextComponentConnector = nextComponent.getConnectorAt(Side.RIGHT);
                 if(!connectosAreCompatible(currentComponentConnector, nextComponentConnector)) {
-                    System.out.println("Uncompatible connectors between element at " + (row+5) + ", " + (col+4)+"and element at " + (row+5) + ", " + (col+3));
                     return -1;
                     //-1 makes checkIntegrity return false,
                     // this is not mandatory for ship integrity, but it's a simple check that is useful for validation
@@ -437,55 +428,6 @@ public class ShipBoard implements Serializable, Cloneable {
 
         return count;
     }
-
-    /**
-     * Keeps only the components connected to the given starting position.
-     * All other components will be removed from the board. This can be used after damage
-     * to preserve a specific part of the ship and remove all detached segments.
-     *
-     * @param origin the starting position of the ship part to preserve
-     */
-//    public void keepOnlyConnectedFrom(Position origin) {
-//        Set<Position> connected = new HashSet<>();
-//        Queue<Position> toVisit = new LinkedList<>();
-//        toVisit.add(origin);
-//
-//        while (!toVisit.isEmpty()) {
-//            Position current = toVisit.poll();
-//            if (connected.contains(current)) continue;
-//            connected.add(current);
-//
-//            SpaceshipComponent currentComp = components[current.getX()][current.getY()];
-//            if (currentComp == null) continue;
-//
-//            for (Side side : Side.values()) {
-//                int[] offset = getOffset(side);
-//                int adjRow = current.getX() + offset[0];
-//                int adjCol = current.getY() + offset[1];
-//
-//                if (!isValidPosition(adjRow, adjCol)) continue;
-//
-//                SpaceshipComponent neighborComp = components[adjRow][adjCol];
-//                if (neighborComp == null) continue;
-//
-//                ConnectorType thisConnector = currentComp.getConnectorAt(side);
-//                ConnectorType neighborConnector = neighborComp.getConnectorAt(getOppositeSide(side));
-//
-//                if (connectorsAreConnected(thisConnector, neighborConnector)) {
-//                    toVisit.add(new Position(adjRow, adjCol));
-//                }
-//            }
-//        }
-//
-//        for (int row = 0; row < components.length; row++) {
-//            for (int col = 0; col < components[0].length; col++) {
-//                Position pos = new Position(row, col);
-//                if (!connected.contains(pos)) {
-//                    components[row][col] = null;
-//                }
-//            }
-//        }
-//    }
 
 
 
@@ -581,117 +523,6 @@ public class ShipBoard implements Serializable, Cloneable {
     }
 
 
-//    /**
-//     * Calculates the total firepower of the ship.
-//     * Considers all cannon components and their orientation relative to the ship's forward direction.
-//     *
-//     *
-//     * @return the sum of effective power from all cannons
-//     */
-//
-//    public int calculateFirepower(Direction shipForward) {
-//        int firepower = 0;
-//        for (int row = 0; row < ROWS; row++) {
-//            for (int col = 0; col < COLS; col++) {
-//                SpaceshipComponent component = components[row][col];
-//                if (component != null) {
-//                    firepower += component.getFirepower(shipForward);
-//                }
-//            }
-//        }
-//        return firepower;
-//    }
-//
-//
-//    /**
-//     * Calculates total thrust considering engine orientation.
-//     */
-//    /**
-//     * Calculates the total thrust produced by all engines correctly oriented to the rear of the ship.
-//     * Only engines that face the specified rear direction contribute their engine power.
-//     *
-//     * @param shipRear the direction that represents the rear of the ship
-//     * @return the total thrust value from all correctly oriented engines
-//     */
-//    public int calculateThrust(Direction shipRear) {
-//        int thrust = 0;
-//        for (int row = 0; row < ROWS; row++) {
-//            for (int col = 0; col < COLS; col++) {
-//                SpaceshipComponent component = components[row][col];
-//                if (component != null) {
-//                    thrust += component.getThrust(shipRear);
-//                }
-//            }
-//        }
-//        return thrust;
-//    }
-
-
-
-    /**
-     * Checks if a component at a given position is protected by an active shield facing a direction.
-     * Accepts incoming side (FRONT, REAR, LEFT, RIGHT) and converts it to Direction internally.
-     */
-    /**
-     * Determines if the component at the specified position is protected by a shield
-     * from the direction corresponding to the incoming side.
-     * Converts the side to a direction and checks adjacent shield generators facing that direction.
-     *
-     * @param pos the position of the component being checked
-     * @param incomingSide the side from which the attack is coming
-     * @return true if the component is protected by a shield, false otherwise
-     */
-//    public boolean isProtectedByShield(Position pos, Side incomingSide) {
-//        int row = pos.getX();
-//        int col = pos.getY();
-//        if (!isValidPosition(row, col)) return false;
-//
-//        Direction incomingDirection = DirectionSideUtils.convertSideToDirection(incomingSide);
-//
-//        switch (incomingDirection){
-//            case UP:
-//                if(condensedShip.getShields().getNorthShields() > 0)
-//                    return true;
-//                break;
-//            case RIGHT:
-//                if(condensedShip.getShields().getEastShields() > 0)
-//                    return true;
-//                break;
-//            case DOWN:
-//                if(condensedShip.getShields().getSouthShields() > 0)
-//                    return true;
-//                break;
-//            case LEFT:
-//                if(condensedShip.getShields().getWestShields() > 0)
-//                    return true;
-//                break;
-//        }
-//        return false;
-//    }
-
-    /**
-     * Applies damage to a given position if it is not protected by a shield.
-     */
-    /**
-     * Applies damage to the component at the given position.
-     * If the component is not protected by a shield in the incoming direction, it is removed (set to null).
-     *
-     * @param pos the position to apply damage to
-     * @param incomingSide the side from which the damage is incoming
-     */
-//    public void applyDamage(Position pos, Side incomingSide) {
-//        int row = pos.getX();
-//        int col = pos.getY();
-//        if (!isValidPosition(row, col)) return;
-//
-//        if (components[row][col] != null) {
-//            if (!isProtectedByShield(pos, incomingSide)) {
-//                components[row][col] = null;
-//            }
-//        }
-//    }
-
-
 
     /**
      * Validates the structure and rules compliance of the current ship configuration.
@@ -712,7 +543,6 @@ public class ShipBoard implements Serializable, Cloneable {
     public boolean validateShip() {
 
         if(!this.checkIntegrity()) {
-            System.out.println("La nave non è strutturalmente integra.");
             return false;
         }
 
@@ -724,7 +554,6 @@ public class ShipBoard implements Serializable, Cloneable {
 
         for(Engine engine : condensedShip.getEnginesList()) {
             if(!engine.getOrientation().equals(Direction.UP)) {
-                System.out.println("Motore non è orientato verso la parte posteriore della nave.");
                 return false;
             }
 

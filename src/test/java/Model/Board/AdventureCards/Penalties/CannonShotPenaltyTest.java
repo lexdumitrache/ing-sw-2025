@@ -57,10 +57,6 @@ public class CannonShotPenaltyTest {
         assertEquals(0, count);
     }
     
-//    @Test
-//    public void testNullList() {
-//        assertThrows(NullPointerException.class, () -> new CannonShotPenalty(null));
-//    }
     @Test
     public void testNullList() {
         CannonShotPenalty penalty = new CannonShotPenalty((List<CannonShot>) null);

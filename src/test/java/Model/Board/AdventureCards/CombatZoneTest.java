@@ -488,36 +488,6 @@ public class CombatZoneTest {
         //assertTrue(output.contains("(no shots)"));
     }
 
-//    /**
-//     * Tests the visualize method with unknown penalty type.
-//     */
-//    @Test
-//    public void testVisualizeWithUnknownPenalty() {
-//        // Create a custom penalty that doesn't match the known types
-//        Penalty unknownPenalty = new Penalty() {
-//            @Override
-//            public String toString() {
-//                return "UnknownPenalty";
-//            }
-//        };
-//
-//        List<CombatZoneLine> lines = new ArrayList<>();
-//        lines.add(new CombatZoneLine(Criteria.FIRE_POWER, unknownPenalty));
-//
-//        CombatZone card = new CombatZone(6, CardLevel.LEVEL_ONE, lines);
-//
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        PrintStream originalOut = System.out;
-//        System.setOut(new PrintStream(outputStream));
-//
-//        card.visualize();
-//
-//        System.setOut(originalOut);
-//        String output = outputStream.toString();
-//
-//        assertTrue(output.contains("Unknown penalty type:"));
-//    }
-
     /**
      * Tests the visualizeString method.
      */

@@ -51,14 +51,6 @@ public class StateTest {
         // PlayerInTurn may be null initially
         assertTrue(true);
     }
-//
-//    @Test
-//    public void testStateConstructorEmpty() {
-//        TestState emptyState = new TestState();
-//        assertNotNull(emptyState);
-//        assertNull(emptyState.getController());
-//        assertNull(emptyState.getPlayerInTurn());
-//    }
 
     @Test
     public void testGetController() {
@@ -291,18 +283,6 @@ public class StateTest {
         assertThrows(InvalidCommand.class, () -> state.getGood("test", 0, new Coordinates(0, 0), 0));
         assertThrows(InvalidCommand.class, () -> state.throwDices("test"));
     }
-//
-//    @Test
-//    public void testStateWithContextController() {
-//
-//        TestState nullState = new TestState();
-//        assertNull(nullState.getController());
-//        assertNull(nullState.getPlayerInTurn());
-//
-//        // Should still throw InvalidCommand for all methods
-//        assertThrows(InvalidCommand.class, () -> nullState.login("test"));
-//        assertThrows(InvalidCommand.class, () -> nullState.logout("test"));
-//    }
 
     @Test
     public void testPlayerInTurnManagement() {

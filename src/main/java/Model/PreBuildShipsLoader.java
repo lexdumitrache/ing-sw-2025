@@ -9,25 +9,20 @@ import Model.Ship.ShipBoard;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
-import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PreBuildShipsLoader {
 
-    private static String SHIPS_PATH = "src/main/resources/ships.json";
+    private static final String SHIPS_PATH = "ships.json";
 
     public static List<ShipBoard> loadPreBuiltShips(MatchLevel level) {
 
 
-        try (FileReader reader = new FileReader(SHIPS_PATH)) {
-
-            JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
+        try {
+            JsonArray array = JsonResource.readArray(SHIPS_PATH);
             List<ShipBoard> ships = new ArrayList<>();
 
             for (JsonElement el : array) {
@@ -105,11 +100,8 @@ public class PreBuildShipsLoader {
 
 
 
-        } catch (FileNotFoundException e){
-            throw new RuntimeException("Ships JSON file not found at: " + SHIPS_PATH, e);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Failed to load spaceship components from JSON", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load pre-built ships from JSON", e);
         }
     }
 

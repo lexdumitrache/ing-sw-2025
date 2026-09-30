@@ -1306,45 +1306,7 @@ public class GameTest {
         }
     }
 
-    /**
-     * Tests main method with case 1 to cover uncovered branches.
-     */
-    @Test
-    public void testMainMethodCase1() {
-        // Temporarily change the var to test case 1
-        try {
-            // We can't directly test main with different var values,
-            // but we can test the logic that would be executed
-            String[] args = {"0"};
-            
-            // Test case 1 logic by reflection or direct execution
-            // This covers the uncovered switch case 1 branch
-            Game.main(args); // This will execute case 0 by default
-            
-        } catch (Exception e) {
-            assertTrue(true);
-        }
-    }
     
-    /**
-     * Tests main method case 1 by calling main with argument "1".
-     */
-    @Test
-    public void testMainMethodCase1WithReflection() {
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-        
-        try {
-            Game.main(new String[]{"1"});
-            assertTrue(true);
-        } catch (Exception e) {
-            assertTrue(true);
-        } finally {
-            System.setOut(originalOut);
-        }
-    }
-
     /**
      * Tests main method with case 2 to cover uncovered branches.
      */
@@ -1392,25 +1354,6 @@ public class GameTest {
         }
     }
     
-    /**
-     * Tests main method case 2 by calling main with argument "2".
-     */
-    @Test
-    public void testMainMethodCase2WithReflection() {
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-        
-        try {
-            Game.main(new String[]{"2"});
-            assertTrue(true);
-        } catch (Exception e) {
-            assertTrue(true);
-        } finally {
-            System.setOut(originalOut);
-        }
-    }
-
     /**
      * Tests getPreBuiltShip method.
      */
@@ -1893,25 +1836,6 @@ public class GameTest {
         } catch (Exception e) {
             // FlightBoard operations may fail
             assertTrue(true);
-        }
-    }
-
-    /**
-     * Tests main method default case by calling main with argument "99".
-     */
-    @Test
-    public void testMainMethodDefaultCase() {
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-        
-        try {
-            Game.main(new String[]{"99"});
-            assertTrue(true);
-        } catch (Exception e) {
-            assertTrue(true);
-        } finally {
-            System.setOut(originalOut);
         }
     }
 

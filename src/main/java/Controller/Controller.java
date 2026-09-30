@@ -55,10 +55,14 @@ public class Controller implements Agent {
 
     public Command dequeueCommand() {
         synchronized (this.commandQueue) {
-            if(this.commandQueue.isEmpty()){
+            // loop guards against spurious wakeups; null is still returned when a null (shutdown) command is enqueued
+            while(this.commandQueue.isEmpty()){
                 try{
                     this.commandQueue.wait();
-                } catch (InterruptedException _){ }
+                } catch (InterruptedException e){
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
             }
             return this.commandQueue.poll();
         }
@@ -181,7 +185,7 @@ public class Controller implements Agent {
      * It continues until the game state is marked as done.
      */
     public void run(){
-        while(!this.model.getState().isDone()){
+        while(!this.model.getState().isDone() && !Thread.currentThread().isInterrupted()){
             final Command command = this.dequeueCommand();
 
             if(command != null){
@@ -201,27 +205,42 @@ public class Controller implements Agent {
                         System.out.println("Strange bug command didn't throw anything but could not find player "+playerName);
                     }
                 } catch (InvalidCommand | InvalidParameters | InvalidMethodParameters | InvalidContextualAction e) {
-                    this.model.setError(true);
-                    String playerName=command.getPlayerName();
-                    Player currentPlayer=model.getPlayer(playerName);
-
-                    if(currentPlayer != null){
-
-                        this.model.setErrorMessage(playerName+" committed an error: "+e.getMessage());
-                        currentPlayer.setError(true);
-                        currentPlayer.setErrorMessage("You committed an error: "+e.getMessage());
-
-                    }else{
-                        this.model.setErrorMessage("Error: "+e.getMessage());
-                    }
+                    this.reportError(command, e.getMessage());
+                } catch (RuntimeException e) {
+                    // an unexpected bug must not kill the game thread, otherwise every player gets stuck
+                    System.err.println("Unexpected error in game " + this.gameID + " while executing " + command.getClass().getSimpleName());
+                    e.printStackTrace(System.err);
+                    this.reportError(command, "unexpected server error (" + e + ")");
                 }
 
-                this.sendAll();
+                try {
+                    this.sendAll();
+                } catch (RuntimeException e) {
+                    System.err.println("Unexpected error in game " + this.gameID + " while sending updates");
+                    e.printStackTrace(System.err);
+                }
             }
         }
 
         if(Server.server==null){return;}
 
         Server.server.destroyGame(this.gameID);
+    }
+
+    /**
+     * Marks the model and the player who sent the command as being in error.
+     */
+    private void reportError(Command command, String message) {
+        this.model.setError(true);
+        String playerName=command.getPlayerName();
+        Player currentPlayer=model.getPlayer(playerName);
+
+        if(currentPlayer != null){
+            this.model.setErrorMessage(playerName+" committed an error: "+message);
+            currentPlayer.setError(true);
+            currentPlayer.setErrorMessage("You committed an error: "+message);
+        }else{
+            this.model.setErrorMessage("Error: "+message);
+        }
     }
 }

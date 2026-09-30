@@ -45,33 +45,9 @@ public class Cannon extends SpaceshipComponent {
         System.out.printf("\n\n\n\n");
     }
 
-//    public void setOrientation(Direction dir) {
-//        this.orientation = dir;
-//    }
-
     public boolean isDouble() {
         return isDouble;
     }
-
-
-//    /**
-//     * Computes effective power in a specific direction.
-//     * Double cannons return 0 unless activated.
-//     * Adds +1 if an alien is onboard.
-//     */
-//    public int getEffectivePower(Direction fireDirection) {
-//        if (getFiringDirections().contains(fireDirection)) {
-//            if (isDouble && !activated) {
-//                return 0; // double cannon not activated → 0 power
-//            }
-//            int power = isDouble ? 2 : 1;
-//            if (hasAlien) {
-//                power += 1;
-//            }
-//            return power;
-//        }
-//        return 0;
-//    }
 
 
     @Override
