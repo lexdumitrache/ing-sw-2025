@@ -125,6 +125,6 @@ public class Cannon extends SpaceshipComponent {
 
         clone.orientation = this.getOrientation();
 
-        return clone;
+        return copyCommonState(clone);
     }
 }

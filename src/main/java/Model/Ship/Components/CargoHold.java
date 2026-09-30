@@ -256,6 +256,6 @@ public class CargoHold extends SpaceshipComponent {
         System.arraycopy(this.goods, 0, clone.goods, 0, this.capacity);
         clone.orientation = this.getOrientation();
 
-        return clone;
+        return copyCommonState(clone);
     }
 }

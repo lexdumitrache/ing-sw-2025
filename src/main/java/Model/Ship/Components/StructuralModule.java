@@ -96,6 +96,6 @@ public class StructuralModule extends SpaceshipComponent {
 
         clone.orientation = this.getOrientation();
 
-        return clone;
+        return copyCommonState(clone);
     }
 }

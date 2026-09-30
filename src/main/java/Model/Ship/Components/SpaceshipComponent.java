@@ -74,6 +74,20 @@ public abstract class SpaceshipComponent implements Serializable, Cloneable {
         return backCardImagePath;
     }
 
+    /**
+     * Copies the state every component shares (picture, orientation, face-up) into a clone.
+     * Subclasses call it at the end of clone() so copies sent to clients keep that state.
+     *
+     * @return the same clone, for chaining
+     */
+    protected <T extends SpaceshipComponent> T copyCommonState(T clone) {
+        final SpaceshipComponent target = clone;
+        target.imagePath = this.imagePath;
+        target.isVisible = this.isVisible;
+        target.orientation = this.orientation;
+        return clone;
+    }
+
     public void setVisible() {
         this.isVisible = true;
     }

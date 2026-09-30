@@ -159,6 +159,6 @@ public class ShieldGenerator extends SpaceshipComponent {
 
         clone.orientation = this.getOrientation();
 
-        return clone;
+        return copyCommonState(clone);
     }
 }

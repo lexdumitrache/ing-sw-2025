@@ -235,6 +235,6 @@ public class Cabin extends SpaceshipComponent {
         clone.canContainPurple = this.canContainPurple;
         clone.orientation = this.getOrientation();
 
-        return clone;
+        return copyCommonState(clone);
     }
 }

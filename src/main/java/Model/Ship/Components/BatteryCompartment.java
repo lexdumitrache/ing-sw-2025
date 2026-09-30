@@ -146,6 +146,6 @@ public class BatteryCompartment extends SpaceshipComponent {
         clone.batteries = this.batteries;
         clone.orientation = this.getOrientation();
 
-        return clone;
+        return copyCommonState(clone);
     }
 }

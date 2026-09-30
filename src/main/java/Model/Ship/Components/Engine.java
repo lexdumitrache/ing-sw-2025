@@ -140,6 +140,6 @@ public class Engine extends SpaceshipComponent {
 
         clone.orientation = this.getOrientation();
 
-        return clone;
+        return copyCommonState(clone);
     }
 }

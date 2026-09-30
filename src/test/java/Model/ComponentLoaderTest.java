@@ -248,4 +248,22 @@ public class ComponentLoaderTest {
             assertNull(component.getShipBoard()); // Should not be assigned to ship
         }
     }
+
+    /**
+     * Clients receive clones of the game, so a clone must keep the picture, orientation and face-up state.
+     */
+    @Test
+    public void testCloneKeepsSharedState() {
+        for (SpaceshipComponent component : ComponentLoader.loadComponents(false)) {
+            component.rotate();
+            component.setVisible();
+
+            final SpaceshipComponent clone = component.clone();
+
+            assertNotNull(clone.getImagePath(), component.getType() + " clone lost its image");
+            assertEquals(component.getImagePath(), clone.getImagePath());
+            assertEquals(component.getOrientation(), clone.getOrientation());
+            assertTrue(clone.isVisible(), component.getType() + " clone is no longer face up");
+        }
+    }
 }
