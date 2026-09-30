@@ -745,8 +745,6 @@ public class BuildingStateTest {
         }
         assertTrue(allNewTiles.containsAll(allOldTiles));
         assertTrue(allNewTiles.contains(oldActiveTile));
-        System.out.println(allNewTiles.size());
-        System.out.println(allOldTiles.size());
         assertTrue(allNewTiles.size()==allOldTiles.size()+1);
         assertDoesNotThrow(() -> level2Controller.lookDeck("Carl", 3));
     }

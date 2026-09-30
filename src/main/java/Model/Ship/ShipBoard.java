@@ -563,7 +563,6 @@ public class ShipBoard implements Serializable, Cloneable {
 
             // Check the position below the engine
             if (isValidPosition(row + 1, col) && components[row + 1][col] != null) {
-                System.out.println("Motore bloccato da un altro pezzo sotto di esso.");
                 return false;
             }
         }
@@ -607,13 +606,11 @@ public class ShipBoard implements Serializable, Cloneable {
             int targetCol = col + offset[1];
 
             if (isValidPosition(targetRow, targetCol) && components[targetRow][targetCol] != null) {
-                System.out.println("Cannon blocked by another piece in its firing direction.");
                 return false;
             }
 
         }
 
-        System.out.println("Validazione nave completata con successo.");
         return true;
     }
 

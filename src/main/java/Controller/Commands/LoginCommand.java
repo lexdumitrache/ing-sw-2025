@@ -48,7 +48,6 @@ public class LoginCommand extends Command {
         } catch (InvalidParameters | InvalidCommand e){
             agent = Server.server;
             action = ClientState::net_JoinFailed;
-            System.out.println("Login Failed");
             throw e;
         } finally {
             if(Server.server!=null){
