@@ -2,88 +2,32 @@ package Model;
 
 import Controller.Enums.MatchLevel;
 import Model.Ship.ShipBoard;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Checks that every pre-built ship in ships.json is legal, so a player choosing one never starts with an invalid ship.
+ */
 public class ShipValidationTest {
 
-    @Test
-    public void testTrialShipsValidation() {
-        Game game = new Game(MatchLevel.TRIAL);
-        List<ShipBoard> ships = game.getPreBuiltShips();
-        
-        System.out.println("=== TRIAL SHIPS VALIDATION ===");
+    @ParameterizedTest
+    @EnumSource(MatchLevel.class)
+    public void testPreBuiltShipsAreValid(MatchLevel level) {
+        List<ShipBoard> ships = new Game(level).getPreBuiltShips();
+
+        assertFalse(ships.isEmpty(), "No pre-built ships for " + level);
+
         for (int i = 0; i < ships.size(); i++) {
             ShipBoard ship = ships.get(i);
-            boolean isValid = ship.validateShip();
-            
-            System.out.println("Ship " + (i + 1) + ":");
-            System.out.println("  Valid: " + isValid);
-            System.out.println("  Components: " + ship.getAllComponents().size());
-            System.out.println("  Engines: " + ship.getCondensedShip().getEngines().getSingleEngines() + " single, " + ship.getCondensedShip().getEngines().getDoubleEngines() + " double");
-            System.out.println("  Cabins: " + ship.getCondensedShip().getCabins().size());
-            System.out.println("  Total Crew: " + ship.getCondensedShip().getTotalCrew());
-            
-            if (!isValid) {
-                System.out.println("  ❌ INVALID SHIP!");
-                System.out.println("  ⚠️  Ship " + (i + 1) + " needs fixing in ships.json");
-            } else {
-                System.out.println("  ✅ Valid ship");
-            }
-            System.out.println();
-        }
-    }
+            String name = level + " pre-built ship " + (i + 1);
 
-    @Test
-    public void testLevel2ShipsValidation() {
-        try {
-            Game game = new Game((MatchLevel) MatchLevel.LEVEL2);
-            List<ShipBoard> ships = game.getPreBuiltShips();
-            
-            System.out.println("=== LEVEL2 SHIPS VALIDATION ===");
-            for (int i = 0; i < ships.size(); i++) {
-                ShipBoard ship = ships.get(i);
-                boolean isValid = ship.validateShip();
-                
-                System.out.println("Ship " + (i + 1) + ":");
-                System.out.println("  Valid: " + isValid);
-                System.out.println("  Components: " + ship.getAllComponents().size());
-                System.out.println("  Engines: " + ship.getCondensedShip().getEngines().getSingleEngines() + " single, " + ship.getCondensedShip().getEngines().getDoubleEngines() + " double");
-                System.out.println("  Cabins: " + ship.getCondensedShip().getCabins().size());
-                System.out.println("  Total Crew: " + ship.getCondensedShip().getTotalCrew());
-                
-                if (!isValid) {
-                    System.out.println("  ❌ INVALID SHIP!");
-                    System.out.println("  ⚠️  Ship " + (i + 1) + " needs fixing in ships.json");
-                } else {
-                    System.out.println("  ✅ Valid ship");
-                }
-                System.out.println();
-            }
-        } catch (Exception e) {
-            System.out.println("Failed to load LEVEL2 ships: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testShipRendering() {
-        Game game = new Game(MatchLevel.TRIAL);
-        List<ShipBoard> ships = game.getPreBuiltShips();
-        
-        System.out.println("=== SHIP RENDERING TEST ===");
-        for (int i = 0; i < ships.size(); i++) {
-            ShipBoard ship = ships.get(i);
-            System.out.println("Rendering Ship " + (i + 1) + ":");
-            try {
-                ship.render(game.getLevel());
-                System.out.println("✅ Ship rendered successfully");
-            } catch (Exception e) {
-                System.out.println("❌ Ship rendering failed: " + e.getMessage());
-            }
-            System.out.println();
+            assertTrue(ship.validateShip(), name + " is not valid");
+            assertFalse(ship.getCondensedShip().getEnginesList().isEmpty(), name + " has no engines");
+            assertFalse(ship.getCondensedShip().getCabins().isEmpty(), name + " has no cabins");
         }
     }
 }

@@ -5,6 +5,8 @@ import Controller.Exceptions.InvalidCommand;
 import Controller.Exceptions.InvalidParameters;
 import Controller.RealTimeBuilding.HourGlassFinishedState;
 import Model.Ship.Coordinates;
+import Model.Ship.ShipBoard;
+import Model.Ship.Components.Engine;
 import Controller.Enums.*;
 
 import java.util.HashMap;
@@ -185,6 +187,7 @@ public class TestStateManager {
             controller.preBuiltShip("Anna", 0);
             controller.preBuiltShip("Bob", 1);
             controller.preBuiltShip("Carl", 2);
+            makeShipInvalid(controller.getModel().getPlayer("Carl").getShipBoard());
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to create test state", e);
@@ -196,6 +199,17 @@ public class TestStateManager {
         }
 
 
+    }
+
+    /**
+     * Breaks a valid ship by turning one of its engines sideways (engines must point to the rear).
+     */
+    public static void makeShipInvalid(ShipBoard ship) {
+        Engine engine = ship.getCondensedShip().getEnginesList().getFirst();
+        engine.rotate();
+        if (ship.validateShip()) {
+            throw new IllegalStateException("Ship is still valid after rotating an engine");
+        }
     }
 
     public static GameSnapshot finishedBuildingAllValid(MatchLevel level) {

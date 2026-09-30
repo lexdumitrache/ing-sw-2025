@@ -26,19 +26,20 @@ public class BuildingStateTest {
 
     /**
      * Test that a player with an invalid ship cannot finish building in Trial level.
-     * Uses prebuilt ship at index 2 which is known to be invalid.
+     * Uses a prebuilt ship made invalid by rotating one of its engines.
      */
     @Test
     public void testFinishBuilding_InvalidShipTrial() {
         Controller controller = TestStateManager.createBuildingWith2PlayersTrial().getController();
         Player anna = controller.getModel().getPlayer("Anna");
 
-        // Set invalid prebuilt ship (index 2)
+        // Set a prebuilt ship and make it invalid
         try {
             controller.preBuiltShip("Anna", 2);
         } catch (Exception e) {
             fail("Failed to set prebuilt ship: " + e.getMessage());
         }
+        TestStateManager.makeShipInvalid(anna.getShipBoard());
 
         // Verify ship is invalid
         assertFalse(anna.getShipBoard().validateShip());
