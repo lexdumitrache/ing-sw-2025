@@ -56,6 +56,6 @@ public class CreateGameMessage implements Message {
 
         game.enqueueCommand(new LoginCommand(username));
 
-        throw new RuntimeException("Killing ServerHandler. Hopefully controller will handle login soon...");
+        throw new HandOffException("Killing ServerHandler. Hopefully controller will handle login soon...");
     }
 }

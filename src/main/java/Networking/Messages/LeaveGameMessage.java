@@ -25,6 +25,6 @@ public class LeaveGameMessage implements Message {
 
         new Handler<>(Server.server, network).start();
 
-        throw new RuntimeException("Killing ControllerHandler and starting ServerHandler");
+        throw new HandOffException("Killing ControllerHandler and starting ServerHandler");
     }
 }

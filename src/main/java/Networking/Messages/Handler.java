@@ -47,6 +47,9 @@ public class Handler<T extends Agent> extends Thread {
                 this.network.setTimeout(System.currentTimeMillis() + Network.TIMEOUT);
                 try {
                     message.handle(this.reference, this.network);
+                } catch (HandOffException e) {
+                    // another agent takes over this connection: stop reading from it
+                    return;
                 } catch (RuntimeException e) {
                     // a single bad message must not stop this connection from being served
                     System.err.println("Error while handling " + message.getClass().getSimpleName());
