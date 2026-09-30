@@ -299,9 +299,9 @@ public class FlightBoardTest {
             CardDeck deck = new CardDeck();
             FlightBoard board = new FlightBoard(players, deck, MatchLevel.LEVEL2);
             
-            // Test all valid positions for LEVEL2 (24 cells)
+            // Test all valid positions for LEVEL2 (24 cells): the board artwork puts the leader 6 spaces ahead
             board.setStartingPositions(player, 1);
-            assertEquals(5, board.getPosition(player));
+            assertEquals(6, board.getPosition(player));
             
             board.setStartingPositions(player, 2);
             assertEquals(3, board.getPosition(player));
