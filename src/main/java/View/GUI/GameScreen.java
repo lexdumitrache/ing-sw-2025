@@ -43,6 +43,7 @@ final class GameScreen implements GUI.Screen {
     private final Label header = new Label();
     private final Label phase = new Label();
     private final Label message = new Label();
+    private final Label hourglass = new Label();
 
     private final ComboBox<String> shipOwner = new ComboBox<>();
     private final ShipBoardPane shipBoard = new ShipBoardPane(CELL, this::cellClicked);
@@ -83,7 +84,11 @@ final class GameScreen implements GUI.Screen {
         message.setWrapText(true);
         message.managedProperty().bind(message.visibleProperty());
 
-        final HBox headerRow = new HBox(16, header, phase);
+        hourglass.getStyleClass().add("hourglass");
+        hourglass.managedProperty().bind(hourglass.visibleProperty());
+        hourglass.setVisible(false);
+
+        final HBox headerRow = new HBox(16, header, phase, hourglass);
         headerRow.setAlignment(Pos.CENTER_LEFT);
         final VBox top = new VBox(6, headerRow, message);
         top.getStyleClass().add("top-bar");
@@ -147,7 +152,12 @@ final class GameScreen implements GUI.Screen {
         final String text = gui.getMessage();
         message.setText(text == null ? "" : text);
         message.setVisible(text != null);
+        message.getStyleClass().remove("notice");
+        if (gui.isNotice()) {
+            message.getStyleClass().add("notice");
+        }
 
+        updateHourglass(state);
         updateShipOwners();
         showShip();
         updateTabs(state);
@@ -163,6 +173,45 @@ final class GameScreen implements GUI.Screen {
             } else {
                 tabs.getSelectionModel().select(playersTab);
             }
+        }
+    }
+
+    /**
+     * Called once a second to keep the hourglass countdown moving.
+     */
+    void tick() {
+        if (game != null) {
+            updateHourglass(View.Client.Client.client.getState());
+        }
+    }
+
+    private void updateHourglass(ClientState state) {
+        final Model.Board.Timer timer = game.getFlightBoard().getTimer();
+        final boolean building = game.getState() instanceof Controller.RealTimeBuilding.BuildingState
+                || game.getState() instanceof Controller.RealTimeBuilding.HourGlassFinishedState;
+        if (timer == null || !(state instanceof BuildingState) || !building) {
+            hourglass.setVisible(false);
+            return;
+        }
+        hourglass.setVisible(true);
+        hourglass.getStyleClass().remove("hourglass-urgent");
+
+        final Model.Board.Timer.Phase timerPhase = timer.getPhase();
+        final int flips = timerPhase.ordinal();
+        final int secondsLeft = (int) Math.ceil(timer.getTimeLeft(game.serverNow()));
+
+        if (timerPhase == Model.Board.Timer.Phase.NOT_USED) {
+            hourglass.setText("⏳ Hourglass not started: flip it to start the countdown");
+        } else if (secondsLeft > 0) {
+            hourglass.setText(String.format("⏳ %d:%02d left · flip %d of 3", secondsLeft / 60, secondsLeft % 60, flips));
+            if (secondsLeft <= 15) {
+                hourglass.getStyleClass().add("hourglass-urgent");
+            }
+        } else if (timerPhase == Model.Board.Timer.Phase.LAST_PHASE) {
+            hourglass.setText("⏳ Time is up!");
+            hourglass.getStyleClass().add("hourglass-urgent");
+        } else {
+            hourglass.setText("⏳ The hourglass ran out (" + flips + " of 3): flip it to continue");
         }
     }
 

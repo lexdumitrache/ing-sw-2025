@@ -1,6 +1,7 @@
 package View.GUI;
 
 import Controller.Enums.MatchLevel;
+import Controller.Server.GameSummary;
 import View.Client.ClientState;
 import View.Client.States.Connected.LoggedIn.GameSelectionState;
 import javafx.geometry.Pos;
@@ -19,7 +20,7 @@ final class GamesScreen implements GUI.Screen {
     private final GUI gui;
     private final VBox root = new VBox();
     private final Label welcome = new Label();
-    private final ListView<Integer> games = new ListView<>();
+    private final ListView<GameSummary> games = new ListView<>();
     private final Button join = new Button("Join");
     private final Button refresh = new Button("Refresh");
     private final ComboBox<MatchLevel> level = new ComboBox<>();
@@ -36,9 +37,18 @@ final class GamesScreen implements GUI.Screen {
         games.setPrefHeight(220);
         games.setCellFactory(_ -> new ListCell<>() {
             @Override
-            protected void updateItem(Integer id, boolean empty) {
-                super.updateItem(id, empty);
-                setText(empty || id == null ? null : "Game #" + id);
+            protected void updateItem(GameSummary game, boolean empty) {
+                super.updateItem(game, empty);
+                if (empty || game == null) {
+                    setText(null);
+                    return;
+                }
+                final String status = game.started() ? "in progress"
+                        : game.canJoin() ? "waiting for players" : "full";
+                setText("Game #" + game.id() + " · " + levelName(game.level()) + " · "
+                        + game.players().size() + "/" + GameSummary.MAX_PLAYERS + " · " + status
+                        + (game.players().isEmpty() ? "" : "\n" + String.join(", ", game.players())));
+                setOpacity(game.canJoin() ? 1 : 0.55);
             }
         });
         games.setOnMouseClicked(event -> {
@@ -48,7 +58,9 @@ final class GamesScreen implements GUI.Screen {
         });
 
         join.setOnAction(_ -> join());
-        join.disableProperty().bind(games.getSelectionModel().selectedItemProperty().isNull());
+        join.disableProperty().bind(javafx.beans.binding.Bindings.createBooleanBinding(
+                () -> games.getSelectionModel().getSelectedItem() == null || !games.getSelectionModel().getSelectedItem().canJoin(),
+                games.getSelectionModel().selectedItemProperty()));
         refresh.setOnAction(_ -> gui.send("UpdateList"));
 
         level.getItems().setAll(MatchLevel.values());
@@ -82,11 +94,15 @@ final class GamesScreen implements GUI.Screen {
             @Override
             protected void updateItem(MatchLevel item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : switch (item) {
-                    case TRIAL -> "Trial flight";
-                    case LEVEL2 -> "Level II";
-                });
+                setText(empty || item == null ? null : levelName(item));
             }
+        };
+    }
+
+    private static String levelName(MatchLevel level) {
+        return switch (level) {
+            case TRIAL -> "Trial flight";
+            case LEVEL2 -> "Level II";
         };
     }
 
@@ -100,10 +116,11 @@ final class GamesScreen implements GUI.Screen {
         welcome.setText("Welcome, " + state.getUsername() + "!");
 
         if (state instanceof GameSelectionState selection) {
-            final Integer selected = games.getSelectionModel().getSelectedItem();
+            final GameSummary selected = games.getSelectionModel().getSelectedItem();
             games.getItems().setAll(Arrays.asList(selection.getGamesList()));
-            if (selected != null && games.getItems().contains(selected)) {
-                games.getSelectionModel().select(selected);
+            if (selected != null) {
+                games.getItems().stream().filter(game -> game.id() == selected.id()).findFirst()
+                        .ifPresent(game -> games.getSelectionModel().select(game));
             }
             create.setDisable(false);
             status.setText(gui.getMessage() == null ? "" : gui.getMessage());
@@ -115,10 +132,10 @@ final class GamesScreen implements GUI.Screen {
     }
 
     private void join() {
-        final Integer id = games.getSelectionModel().getSelectedItem();
-        if (id != null) {
-            status.setText("Joining game #" + id + "…");
-            gui.send("Join", id.toString());
+        final GameSummary game = games.getSelectionModel().getSelectedItem();
+        if (game != null && game.canJoin()) {
+            status.setText("Joining game #" + game.id() + "…");
+            gui.send("Join", Integer.toString(game.id()));
         }
     }
 }

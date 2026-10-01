@@ -231,3 +231,20 @@
 .good-chip-selected {
     -fx-background-color: rgba(255, 210, 90, 0.35);
 }
+
+.hourglass {
+    -fx-background-color: rgba(255, 210, 90, 0.18);
+    -fx-text-fill: #ffd25a;
+    -fx-background-radius: 10;
+    -fx-padding: 3 10;
+    -fx-font-weight: bold;
+}
+
+.hourglass-urgent {
+    -fx-background-color: #8a2f3f;
+    -fx-text-fill: #ffffff;
+}
+
+.message.notice {
+    -fx-background-color: #2f5fa8;
+}

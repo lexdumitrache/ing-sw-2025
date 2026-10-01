@@ -13,6 +13,7 @@ Play over the network with friends, through a graphical client or a text client.
 - **Graphical client** (JavaFX) using the original board and tile artwork
 - **Text client** that works in any terminal
 - **Networking** over TCP sockets or Java RMI, with several games running on the same server
+- **Resilient to disconnections:** if a player drops out, the game goes on without waiting for them, and they can log back in to take their seat again
 
 ## Quick start
 
@@ -85,6 +86,12 @@ Click a tile of your ship to act on it: use a battery, lose a crew member, load,
 The **Flight board** tab shows where every rocket is, and who is acting.
 
 ![The Level II flight board](docs/screenshots/flight-board.png)
+
+### If someone loses their connection
+
+The server notices a lost connection within about 10 seconds. A player who leaves the lobby before the game starts is simply removed. During the game, the player keeps their seat: after a 15-second grace period an auto-pilot plays their turns in the most passive way allowed (declaring no extra power, skipping rewards, accepting penalties), so nobody is left waiting. A player who never got to build is given a ready-made ship.
+
+To get back in, start the client again, connect to the same server and log in with **the same name**: you are taken straight back into your game. A game nobody is connected to is closed after two minutes.
 
 ## Text client
 

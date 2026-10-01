@@ -1,5 +1,11 @@
 package View.Client.States.Connected.LoggedIn;
 
+import View.Client.States.Connected.LoggedIn.GameSelected.Playing.RewardState;
+import View.Client.States.Connected.LoggedIn.GameSelected.Playing.FlightState;
+import View.Client.States.Connected.LoggedIn.GameSelected.Playing.BuildingState;
+import View.Client.States.Connected.LoggedIn.GameSelected.LobbyState;
+import Controller.Server.GameSummary;
+import Model.Game;
 import Controller.Enums.MatchLevel;
 import Networking.Messages.CreateGameMessage;
 import Networking.Messages.JoinGameMessage;
@@ -22,7 +28,7 @@ public final class GameSelectionState extends LoggedInState {
      * The list of available games represented by their IDs.
      * This array is updated when the server sends a new list of games.
      */
-    private Integer[] gamesList = new Integer[0];
+    private GameSummary[] gamesList = new GameSummary[0];
 
     /**
      * Constructs a GameSelectionState with the specified network and username.
@@ -81,12 +87,35 @@ public final class GameSelectionState extends LoggedInState {
      * @param newGamesList An array of integers representing the new list of game IDs.
      * @return The updated ClientState with the new games list.
      */
-    public Integer[] getGamesList() {
+    public GameSummary[] getGamesList() {
         return this.gamesList;
     }
 
+    /**
+     * Puts the player back into the game they were playing before losing their connection,
+     * in the client state matching the phase the game is in.
+     */
     @Override
-    public ClientState updateList(Integer[] newGamesList){
+    public ClientState net_Rejoin(Game game) {
+        final Controller.State phase = game.getState();
+        final ClientState state;
+
+        if (phase instanceof Controller.PreMatchLobby.LogInState) {
+            state = new LobbyState(this.getNetwork(), this.getUsername(), game);
+        } else if (phase != null && phase.getClass().getPackageName().equals("Controller.RealTimeBuilding")) {
+            state = new BuildingState(this.getNetwork(), this.getUsername(), game);
+        } else if (phase instanceof Controller.GamePhases.RewardsPhase) {
+            state = new RewardState(this.getNetwork(), this.getUsername(), game);
+        } else {
+            state = new FlightState(this.getNetwork(), this.getUsername(), game);
+        }
+        final ClientState result = state.updateGame(game);
+        Client.view.notify("Welcome back! You rejoined your game.");
+        return result;
+    }
+
+    @Override
+    public ClientState updateList(GameSummary[] newGamesList){
         this.gamesList = newGamesList;
 
         return this;
@@ -118,11 +147,10 @@ public final class GameSelectionState extends LoggedInState {
     @Override
     public void list(){
         final List<String> games = new ArrayList<>();
-
-        for(Integer game : this.gamesList){
-            games.add(game.toString());
+        for(GameSummary game : this.gamesList){
+            games.add(game.id() + ": " + game.level() + ", " + String.join(", ", game.players())
+                    + (game.started() ? " (in progress)" : game.canJoin() ? "" : " (full)"));
         }
-
         Client.view.showOptions("Games are ", games);
     }
 }

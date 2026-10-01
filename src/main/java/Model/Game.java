@@ -36,6 +36,10 @@ public class Game implements Serializable, Cloneable {
     private String errorMessage=null;
 
     private List<String> renderCard;
+    /** Server clock when this copy was made, and local clock when it was received (see serverNow()). */
+    private long serverTime = 0;
+    private transient long receivedAt = 0;
+
     /** Goods offered by the card being resolved (index = goodIndex of GetGood), copied for clients. */
     private List<Good> offeredGoods = new ArrayList<>();
     /** Image of the last adventure card drawn, shown by the GUI (null before the first card). */
@@ -351,6 +355,7 @@ public class Game implements Serializable, Cloneable {
         final Context context = (old.state != null) ? old.state.getContext() : null;
         this.renderCard = (context != null) ? context.getRender() : new ArrayList<>();
         this.currentCardImagePath = old.currentCardImagePath;
+        this.serverTime = System.currentTimeMillis();
         this.offeredGoods = (context != null && context.getGoods() != null) ? new ArrayList<>(context.getGoods()) : new ArrayList<>();
         this.error = old.error;
         this.errorMessage = old.errorMessage;
@@ -360,6 +365,22 @@ public class Game implements Serializable, Cloneable {
 
     public List<String> renderCard(){
         return this.renderCard;
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.receivedAt = System.currentTimeMillis();
+    }
+
+    /**
+     * @return the current time on the server's clock. On a copy received by a client this is estimated from
+     * when the copy was made, so timers are right even if the two computers' clocks differ.
+     */
+    public long serverNow() {
+        if (this.receivedAt == 0 || this.serverTime == 0) {
+            return System.currentTimeMillis();
+        }
+        return this.serverTime + (System.currentTimeMillis() - this.receivedAt);
     }
 
     /**

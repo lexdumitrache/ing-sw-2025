@@ -1,5 +1,7 @@
 package View.Client.Actions;
 
+import Controller.Server.GameSummary;
+
 import View.Client.ClientState;
 
 /**
@@ -12,7 +14,7 @@ public class UpdateListAction implements Action {
      * The new list of game IDs to update in the client state.
      * This array contains the IDs of the games that are currently available.
      */
-    private final Integer[] newList;
+    private final GameSummary[] newList;
 
     /**
      * Constructs an UpdateListAction with the specified new list of game IDs.
@@ -20,7 +22,7 @@ public class UpdateListAction implements Action {
      *
      * @param newList An array of Integer representing the new list of game IDs.
      */
-    public UpdateListAction(Integer[] newList) {
+    public UpdateListAction(GameSummary[] newList) {
         this.newList = newList;
     }
 

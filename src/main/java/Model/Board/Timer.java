@@ -33,7 +33,14 @@ public class Timer implements Serializable, Cloneable {
     }
 
     public float getTimeLeft() {
-        long currentTime = System.currentTimeMillis();
+        return getTimeLeft(System.currentTimeMillis());
+    }
+
+    /**
+     * @param currentTime the current time on the server's clock (see Game.serverNow())
+     * @return the seconds left before the hourglass runs out
+     */
+    public float getTimeLeft(long currentTime) {
 
         if (currentTime > targetTime) {
             return 0.0f;
