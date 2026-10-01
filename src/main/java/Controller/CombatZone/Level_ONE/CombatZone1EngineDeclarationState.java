@@ -96,7 +96,13 @@ public class CombatZone1EngineDeclarationState extends State {
             throw new InvalidParameters("Declared amount must match the ship's base power decimal part");
         }
 
-        int delta = (int) (amount - minPower);
+        int delta = player.getShipBoard().getCondensedShip().declaredDoublesStrength(amount, true);
+
+        if (delta < 0) {
+
+            throw new InvalidParameters("Declared amount is out of bounds");
+
+        }
 
         if(delta % 2 != 0) {
             

@@ -57,6 +57,12 @@ public class BuildingState extends State {
         MatchLevel matchLevel=controller.getMatchLevel();
         this.validCoordinates.putAll(ShipBoard.getValidCells(matchLevel));
 
+        // rulebook: the timer starts when building starts ("Go!"); players flip it afterwards
+        final Timer timer = controller.getModel().getFlightBoard().getTimer();
+        if(timer != null && timer.getPhase() == Timer.Phase.NOT_USED){
+            timer.nextPhase();
+        }
+
         controller.setQueuedAction(ClientState::net_Start);
     }
 

@@ -185,12 +185,12 @@ public class PiratesManageShotState extends State{
                 }
                 break;
             case Side.RIGHT:
-                if(player.getShipBoard().getCondensedShip().getShields().getWestShields() > 0){
+                if(player.getShipBoard().getCondensedShip().getShields().getEastShields() > 0){
                     shieldFound = true;
                 }
                 break;
             case Side.LEFT:
-                if(player.getShipBoard().getCondensedShip().getShields().getEastShields() > 0){
+                if(player.getShipBoard().getCondensedShip().getShields().getWestShields() > 0){
                     shieldFound = true;
                 }
                 break;

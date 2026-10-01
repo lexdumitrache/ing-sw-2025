@@ -80,7 +80,13 @@ public class SlaversPowerDeclarationState extends State {
             throw new InvalidParameters("Declared amount must match the ship's base power decimal part");
         }
 
-        int delta = (int) (amount - minPower);
+        int delta = player.getShipBoard().getCondensedShip().declaredDoublesStrength(amount, false);
+
+        if (delta < 0) {
+
+            throw new InvalidParameters("Declared amount is out of bounds");
+
+        }
 
         int frontCannons = player.getShipBoard().getCondensedShip().getTotalDoubleCannons().getFrontCannons();
         int otherCannons = player.getShipBoard().getCondensedShip().getTotalDoubleCannons().getOtherCannons();

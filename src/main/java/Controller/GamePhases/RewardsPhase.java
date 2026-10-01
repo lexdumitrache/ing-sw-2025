@@ -1,5 +1,6 @@
 package Controller.GamePhases;
 
+import Model.Ship.Components.CargoHold;
 import Controller.Controller;
 import Controller.Enums.MatchLevel;
 import Controller.Exceptions.InvalidParameters;
@@ -92,23 +93,21 @@ public class RewardsPhase extends State {
         }
 
         for(Player p : this.getController().getModel().getFlightBoard().getFinishedFlightPlayers()){
-            List<Good> allGoods = p.getShipBoard().getCondensedShip().getCargoHolds().stream()
-                    .flatMap(cargo -> Arrays.stream(cargo.getGoods()))
-                    .toList();
-            for(Good g : allGoods){
-                if (g != null) {
-                    switch(g){
-                        case RED -> p.deltaCredits(2);
-                        case YELLOW -> p.deltaCredits(2);
-                        case GREEN -> p.deltaCredits(1);
-                        case BLUE -> p.deltaCredits(1);
-                        default -> {
-                            // Do nothing for unknown goods
-                        }
+            // rulebook: a player who gave up adds up the standard price of all their goods and gets half (round up)
+            int total = 0;
+            for(CargoHold cargo : p.getShipBoard().getCondensedShip().getCargoHolds()){
+                for(Good g : cargo.getGoods()){
+                    if (g != null) {
+                        total += switch (g) {
+                            case RED -> 4;
+                            case YELLOW -> 3;
+                            case GREEN -> 2;
+                            case BLUE -> 1;
+                        };
                     }
                 }
             }
-
+            p.deltaCredits((total + 1) / 2);
             p.deltaCredits(-p.getJunk());
         }
 

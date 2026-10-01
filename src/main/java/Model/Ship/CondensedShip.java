@@ -273,6 +273,10 @@ public class CondensedShip implements Serializable, Cloneable {
         power += doubleCannons.getFrontCannons() * 2;
         power += doubleCannons.getOtherCannons();
 
+        // the purple alien adds +2 as soon as the cannon strength without it is above 0, double cannons included
+        if(getBasePower() == 0 && power > 0 && this.getAliens().hasPurpleAlien()){
+            power += 2;
+        }
         return power;
     }
 
@@ -303,7 +307,33 @@ public class CondensedShip implements Serializable, Cloneable {
     public double getMaxThrust(){
         double thrust = getBaseThrust();
         thrust += this.getEngines().getDoubleEngines() * 2;
+        // the brown alien adds +2 as soon as the engine strength without it is above 0, double engines included
+        if(getBaseThrust() == 0 && thrust > 0 && this.getAliens().hasBrownAlien()){
+            thrust += 2;
+        }
         return thrust;
+    }
+
+    /**
+     * Converts a declared engine or cannon strength into the strength the double components must add.
+     * Rulebook: an alien gives +2 only if the strength without it is above 0. When the single components give 0,
+     * powering a double component therefore also switches the alien bonus on.
+     *
+     * @param amount  the declared total strength
+     * @param engines true for engine strength (brown alien), false for cannon strength (purple alien)
+     * @return the strength to get from double components, or -1 if the amount cannot be reached
+     */
+    public int declaredDoublesStrength(double amount, boolean engines){
+        final double base = engines ? getBaseThrust() : getBasePower();
+        final boolean alien = engines ? this.getAliens().hasBrownAlien() : this.getAliens().hasPurpleAlien();
+        double delta = amount - base;
+        if(alien && base == 0 && amount > 0){
+            delta -= 2;
+            if(delta <= 0){
+                return -1;
+            }
+        }
+        return delta < 0 ? -1 : (int) delta;
     }
 
     @Override
