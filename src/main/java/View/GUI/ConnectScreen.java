@@ -80,6 +80,9 @@ final class ConnectScreen implements GUI.Screen {
         tcp.setDisable(!canChoose);
         rmi.setDisable(!canChoose);
         connect.setDisable(false);
+        if (gui.getMessage() != null) {
+            status.setText(gui.getMessage());
+        }
     }
 
     private void connect() {
@@ -103,6 +106,9 @@ final class ConnectScreen implements GUI.Screen {
             Client.client.createAction("Connect", new String[]{hostname, portText});
 
             final boolean failed = Client.client.getState() instanceof ConnectingState;
+            if (!failed) {
+                gui.log(null);
+            }
             javafx.application.Platform.runLater(() -> {
                 connect.setDisable(false);
                 status.setText(failed ? "Could not connect to " + hostname + ":" + portText + ". Is the server running?" : "");

@@ -10,11 +10,16 @@ import View.Client.States.Connected.LoginState;
 import View.Client.States.Connected.UnconfirmedLoginState;
 import View.Client.States.ProtocolChoiceState;
 import View.View;
+import View.Client.States.ConnectedState;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Map;
@@ -101,7 +106,28 @@ public final class GUI extends View {
         }
         stage.setScene(scene);
         stage.show();
+
+        // once a second: notice a lost connection, and keep the hourglass countdown moving
+        final Timeline clock = new Timeline(new KeyFrame(Duration.seconds(1), _ -> tick()));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
+
         started.countDown();
+    }
+
+    private void tick() {
+        final ClientState state = Client.client.getState();
+        final boolean lost = state.isDone()
+                || (state instanceof ConnectedState connected && connected.getNetwork().isDone());
+        if (lost) {
+            Client.client.restart();
+            log("The connection to the server was lost. Connect again and log in with the same name to get back into your game.");
+            refresh();
+            return;
+        }
+        if (stage.getScene().getRoot() == gameScreen.root()) {
+            gameScreen.tick();
+        }
     }
 
     /**
@@ -128,7 +154,17 @@ public final class GUI extends View {
     /**
      * @return the last message (error or information) to show to the player, or null
      */
+    /**
+     * @return true if the message shown is an information notice rather than an error
+     */
+    boolean isNotice() {
+        return message == null && notice != null && System.currentTimeMillis() < noticeUntil;
+    }
+
     String getMessage() {
+        if (message == null && notice != null && System.currentTimeMillis() < noticeUntil) {
+            return notice;
+        }
         return message;
     }
 
@@ -137,6 +173,16 @@ public final class GUI extends View {
         if (stage != null) {
             Platform.runLater(this::refresh);
         }
+    }
+
+    /** An information message shown for a few seconds, even if game updates clear the error messages. */
+    private String notice;
+    private long noticeUntil;
+
+    @Override
+    public void notify(String message) {
+        this.notice = message;
+        this.noticeUntil = System.currentTimeMillis() + 6000;
     }
 
     @Override

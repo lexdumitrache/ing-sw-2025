@@ -93,6 +93,13 @@ public class Client implements Agent {
     }
 
     /**
+     * Starts over from the protocol choice, e.g. after the connection to the server was lost.
+     */
+    public synchronized void restart() {
+        this.state = new ProtocolChoiceState();
+    }
+
+    /**
      * Executes the specified action on the current client state.
      * This method synchronizes access to the client state to ensure thread safety
      * when executing actions that may modify the state.

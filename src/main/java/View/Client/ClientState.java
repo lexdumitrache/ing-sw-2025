@@ -1,5 +1,7 @@
 package View.Client;
 
+import Controller.Server.GameSummary;
+
 import Controller.Enums.MatchLevel;
 import Model.Game;
 import Model.Ship.Coordinates;
@@ -165,6 +167,10 @@ public interface ClientState {
      * @return A new ClientState representing the state after leaving the game.
      */
 
+    default ClientState net_Rejoin(Game game) {
+        throw new UnsupportedOperationException("Cannot invoke rejoin on " + this.getClass().getName());
+    }
+
     default ClientState net_Leave(String username) {
         throw new UnsupportedOperationException("Cannot invoke leave on " + this.getClass().getName());
     }
@@ -234,7 +240,7 @@ public interface ClientState {
      * @param newGamesList An array of integers representing the new list of game IDs.
      * @return The updated ClientState with the new games list.
      */
-    default ClientState updateList(Integer[] newGamesList) {
+    default ClientState updateList(GameSummary[] newGamesList) {
         throw new UnsupportedOperationException("Cannot invoke updateList on " + this.getClass().getName());
     }
 

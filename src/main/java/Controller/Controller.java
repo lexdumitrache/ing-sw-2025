@@ -4,6 +4,7 @@ import Controller.Commands.Command;
 import Controller.Enums.*;
 import Controller.Exceptions.*;
 import Controller.PreMatchLobby.LogInState;
+import Controller.PreMatchLobby.OffState;
 // Import del modello
 import Controller.Server.Server;
 import Model.Enums.Direction;
@@ -14,18 +15,32 @@ import Model.Player;
 import Model.Ship.Coordinates;
 import Networking.Agent;
 import Networking.Messages.ClientMessage;
+import Networking.Messages.Handler;
 import Networking.Network;
 import View.Client.Actions.Action;
+import View.Client.Actions.RejoinAction;
 import View.Client.Actions.UpdateGameAction;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Controller implements Agent {
+    /** How often connections are checked while no command arrives. */
+    private static final long CONNECTION_CHECK_MS = 1000;
+    /** How long a disconnected player has to come back before the auto-pilot plays for them. */
+    private static long autoPilotDelayMs = 15000;
+    /** How long a game with nobody connected is kept, waiting for someone to rejoin. */
+    private static final long ABANDONED_GAME_MS = 120000;
+
     private final Game model;
     private final Queue<Command> commandQueue= new LinkedList<>();
     private final MatchLevel matchLevel;
     private final int gameID;
     private Action queuedAction;
+
+    /** Players whose connection was lost, with the time it was noticed. */
+    private final Map<String, Long> disconnectedSince = new ConcurrentHashMap<>();
+    private long nobodyConnectedSince = -1;
 
     public Controller(MatchLevel matchLevel, int GameID) {
         this.model = new Game(matchLevel);
@@ -68,7 +83,127 @@ public class Controller implements Agent {
         }
     }
 
+    /**
+     * Waits up to timeoutMs for a command.
+     *
+     * @return the command, or null if none arrived in time (or a null shutdown command was enqueued)
+     */
+    private Command pollCommand(long timeoutMs) {
+        synchronized (this.commandQueue) {
+            if (this.commandQueue.isEmpty()) {
+                try {
+                    this.commandQueue.wait(timeoutMs);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
+            }
+            return this.commandQueue.poll();
+        }
+    }
+
     public MatchLevel getMatchLevel() {return matchLevel;}
+
+    /* ------------------------------------------------------------ disconnections */
+
+    /**
+     * @return true if the player is in this game but their connection was lost
+     */
+    public boolean isDisconnected(String name) {
+        return disconnectedSince.containsKey(name);
+    }
+
+    /**
+     * Records that a player lost their connection. Before the game starts they are simply removed.
+     */
+    public void playerDisconnected(String name) {
+        if (disconnectedSince.containsKey(name) || model.getPlayer(name) == null) {
+            return;
+        }
+        System.out.println("Player " + name + " disconnected from game " + gameID);
+
+        if (model.getState() instanceof LogInState) {
+            try {
+                model.getState().logout(name);
+            } catch (InvalidCommand | InvalidParameters | InvalidMethodParameters e) {
+                System.err.println("Could not remove " + name + " from the lobby: " + e.getMessage());
+            }
+            return;
+        }
+        disconnectedSince.put(name, System.currentTimeMillis());
+    }
+
+    /**
+     * Gives a disconnected player their seat back on their new connection.
+     *
+     * @throws InvalidParameters if the player is not disconnected from this game or has no connection
+     */
+    public void reconnect(String name) throws InvalidParameters {
+        if (!disconnectedSince.containsKey(name)) {
+            throw new InvalidParameters(name + " is not disconnected from this game");
+        }
+        final Network network = Server.server == null ? null : Server.server.getNetwork(name);
+        if (network == null || network.isDone()) {
+            throw new InvalidParameters("No connection for " + name);
+        }
+        disconnectedSince.remove(name);
+        network.send(new ClientMessage(new RejoinAction(this.model.clone())));
+        new Handler<>(this, network).start();
+        System.out.println("Player " + name + " rejoined game " + gameID);
+    }
+
+    /**
+     * Notices players whose connection was lost, and closes the game if nobody has been connected for a while.
+     *
+     * @return true if something changed
+     */
+    private boolean checkConnections() {
+        if (Server.server == null) {
+            return false;
+        }
+        boolean changed = false;
+        for (Player player : new ArrayList<>(model.getPlayers())) {
+            final Network network = Server.server.getNetwork(player.getName());
+            if ((network == null || network.isDone()) && !disconnectedSince.containsKey(player.getName())) {
+                playerDisconnected(player.getName());
+                changed = true;
+            }
+        }
+
+        final boolean anyoneConnected = model.getPlayers().stream().anyMatch(p -> !disconnectedSince.containsKey(p.getName()));
+        if (anyoneConnected || model.getPlayers().isEmpty()) {
+            nobodyConnectedSince = -1;
+        } else if (nobodyConnectedSince < 0) {
+            nobodyConnectedSince = System.currentTimeMillis();
+        } else if (System.currentTimeMillis() - nobodyConnectedSince > ABANDONED_GAME_MS) {
+            System.out.println("Closing game " + gameID + ": nobody has been connected for " + ABANDONED_GAME_MS / 1000 + "s");
+            model.setState(new OffState(this));
+        }
+        return changed;
+    }
+
+    /**
+     * Lets the auto-pilot play for the players who have been disconnected for longer than the grace period.
+     *
+     * @return true if it made a move
+     */
+    public boolean runAutoPilot() {
+        final long now = System.currentTimeMillis();
+        final Set<String> absent = new HashSet<>();
+        disconnectedSince.forEach((name, since) -> {
+            if (now - since >= autoPilotDelayMs) {
+                absent.add(name);
+            }
+        });
+        return !absent.isEmpty() && AutoPilot.play(this, absent);
+    }
+
+    /**
+     * Changes how long a disconnected player has to come back before the auto-pilot plays for them (used by tests).
+     */
+    public static void setAutoPilotDelay(long delayMs) {
+        autoPilotDelayMs = delayMs;
+    }
 
 
     /*
@@ -165,6 +300,10 @@ public class Controller implements Agent {
         }
 
         for(Player player : this.getModel().getPlayers()){
+            if(disconnectedSince.containsKey(player.getName())){
+                // a player who rejoins receives the whole game when they are back
+                continue;
+            }
             Network network = Server.server.getNetwork(player.getName());
             if(network != null && !network.isDone()) {
 
@@ -186,9 +325,12 @@ public class Controller implements Agent {
      */
     public void run(){
         while(!this.model.getState().isDone() && !Thread.currentThread().isInterrupted()){
-            final Command command = this.dequeueCommand();
+            // wake up regularly, even without commands, to notice lost connections
+            final Command command = this.pollCommand(CONNECTION_CHECK_MS);
+            boolean changed = false;
 
             if(command != null){
+                changed = true;
                 try {
                     command.execute(this);
 
@@ -213,6 +355,19 @@ public class Controller implements Agent {
                     this.reportError(command, "unexpected server error (" + e + ")");
                 }
 
+            }
+
+            try {
+                changed |= this.checkConnections();
+                if (Server.server != null) {
+                    changed |= this.runAutoPilot();
+                }
+            } catch (RuntimeException e) {
+                System.err.println("Unexpected error in game " + this.gameID + " while handling disconnections");
+                e.printStackTrace(System.err);
+            }
+
+            if (changed) {
                 try {
                     this.sendAll();
                 } catch (RuntimeException e) {

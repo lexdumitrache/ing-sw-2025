@@ -21,10 +21,10 @@ public class UpdateListMessage implements Message {
         try{
             server = (Server) agent;
         } catch (ClassCastException e){
-            System.err.println("Server object is not a Server");
+            // the connection is handled by a game (e.g. a player who just rejoined): no game list to send
             return;
         }
 
-        network.send(new ClientMessage(new UpdateListAction(server.getGameIds())));
+        network.send(new ClientMessage(new UpdateListAction(server.getGameSummaries())));
     }
 }

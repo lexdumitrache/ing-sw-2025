@@ -2,7 +2,9 @@ package Controller.Server;
 
 import Controller.Controller;
 import Controller.Enums.MatchLevel;
+import Controller.PreMatchLobby.LogInState;
 import Controller.PreMatchLobby.OffState;
+import Controller.State;
 import Networking.Agent;
 import Networking.Messages.PrintMessage;
 import Networking.Network;
@@ -171,9 +173,13 @@ public class Server implements Agent {
             return false;
         }
 
-        //username already used
-        if(this.players.containsValue(username))
-            return false;
+        //username already used, unless its previous connection was lost (the player is coming back)
+        final Network previous = this.getNetwork(username);
+        if(previous != null) {
+            if(!previous.isDone())
+                return false;
+            this.players.remove(previous);
+        }
 
         this.uninitialized.remove(network);
         this.players.put(network, username);
@@ -207,6 +213,22 @@ public class Server implements Agent {
         }
     }
 
+    /**
+     * @return a summary of every game, ordered by id, for the game list
+     */
+    public GameSummary[] getGameSummaries() {
+        synchronized (this.games) {
+            return this.games.values().stream()
+                    .sorted(java.util.Comparator.comparingInt(Controller::getGameID))
+                    .map(game -> new GameSummary(
+                            game.getGameID(),
+                            game.getMatchLevel(),
+                            game.getModel().getPlayers().stream().map(Model.Player::getName).toList(),
+                            !(game.getModel().getState() instanceof LogInState)))
+                    .toArray(GameSummary[]::new);
+        }
+    }
+
     public Controller createGame(MatchLevel matchLevel){
         synchronized(this.games){
             final int gameId = this.nextGameId++;
@@ -225,6 +247,23 @@ public class Server implements Agent {
             System.err.println("Destroying game " + gameId);
 
             this.games.remove(gameId);
+        }
+    }
+
+    /**
+     * @return the started game the player belongs to, or null. A player logging in with that name
+     * after losing their connection gets their seat back.
+     */
+    public Controller getRunningGameOf(String username) {
+        synchronized (this.games) {
+            for (Controller game : this.games.values()) {
+                final State state = game.getModel().getState();
+                if (game.getModel().getPlayer(username) != null && state != null && !state.isDone()
+                        && !(state instanceof LogInState)) {
+                    return game;
+                }
+            }
+            return null;
         }
     }
 

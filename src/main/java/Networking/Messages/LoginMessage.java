@@ -1,5 +1,8 @@
 package Networking.Messages;
 
+import Controller.Controller;
+import Controller.Commands.RejoinCommand;
+
 import Controller.Server.Server;
 import Networking.Agent;
 import Networking.Network;
@@ -43,6 +46,14 @@ public class LoginMessage implements Message {
             return;
         }
 
-        network.send(new ClientMessage(server.login(network, username) ? new LoginSuccessAction(username) : new LoginFailedAction(username)));
+        final boolean success = server.login(network, username);
+        network.send(new ClientMessage(success ? new LoginSuccessAction(username) : new LoginFailedAction(username)));
+
+        // a player coming back after losing their connection is put back into their game
+        final Controller game = success ? server.getRunningGameOf(username) : null;
+        if (game != null) {
+            game.enqueueCommand(new RejoinCommand(username));
+            throw new HandOffException("Player " + username + " is rejoining game " + game.getGameID());
+        }
     }
 }

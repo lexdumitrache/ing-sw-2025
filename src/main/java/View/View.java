@@ -81,6 +81,15 @@ public abstract class View implements Runnable {
     public abstract void log(String message);
 
     /**
+     * Shows a short information message (not an error). By default it is shown like any other message.
+     *
+     * @param message The message to show.
+     */
+    public void notify(String message) {
+        log(message);
+    }
+
+    /**
      * Abstract method to show options in the view.
      * This method should be implemented by subclasses to display a list of options to the user.
      *
