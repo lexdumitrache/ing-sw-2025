@@ -65,7 +65,8 @@ public class BatteryCompartmentTest {
         battery.removed();
         assertFalse(ship.getCondensedShip().getBatteryCompartments().contains(battery));
         
-        assertThrows(RuntimeException.class, battery::removed);
+        // removing it again does nothing (a destroyed tile can also be detached with its section)
+        assertDoesNotThrow(battery::removed);
     }
 
     @Test

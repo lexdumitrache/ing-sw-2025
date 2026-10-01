@@ -427,7 +427,10 @@ public class Context {
         if (specialPlayers == null) {
             specialPlayers = new ArrayList<>();
         }
-        specialPlayers.add(player);
+        // a player is either hit or not: adding them twice would make them wait for a turn that never comes
+        if (!specialPlayers.contains(player)) {
+            specialPlayers.add(player);
+        }
     }
 
     public void removeSpecialPlayer(Player player) {

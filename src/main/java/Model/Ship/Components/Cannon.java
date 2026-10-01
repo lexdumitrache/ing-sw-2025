@@ -62,7 +62,7 @@ public class Cannon extends SpaceshipComponent {
     @Override
     public void removed() {
         if(!getShipBoard().getCondensedShip().getCannons().contains(this)){
-            throw new RuntimeException("Cannon not found in the ship.");
+            return; // already removed: a destroyed tile can also be detached with the rest of its section
         } else {
             getShipBoard().getCondensedShip().removeCannon(this);
         }

@@ -124,7 +124,8 @@ public class EngineTest {
         assertFalse(ship.getCondensedShip().getEnginesList().contains(engine));
         assertEquals(singleEnginesAfterAdd - 1, ship.getCondensedShip().getEngines().getSingleEngines());
         
-        assertThrows(RuntimeException.class, engine::removed);
+        // removing it again does nothing (a destroyed tile can also be detached with its section)
+        assertDoesNotThrow(engine::removed);
     }
 
     @Test

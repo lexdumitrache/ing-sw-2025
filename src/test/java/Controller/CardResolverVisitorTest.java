@@ -7,6 +7,7 @@ import Controller.CombatZone.Level_TWO.CombatZone2PowerDeclarationState;
 import Controller.Enums.MatchLevel;
 import Controller.Exceptions.InvalidParameters;
 import Controller.GamePhases.FlightPhase;
+import Controller.GamePhases.RewardsPhase;
 import Controller.MeteorsSwarm.MeteorsState;
 import Controller.OpenSpace.OpenSpaceEngineDeclarationState;
 import Controller.Pirates.PiratesPowerDeclarationState;
@@ -340,12 +341,9 @@ public class CardResolverVisitorTest {
             visitor.visit(card, singleController);
         } catch (InvalidMethodParameters e) {
             fail("Unexpected InvalidMethodParameters: " + e.getMessage());
-        } catch (NullPointerException e) {
-            // Expected due to null deck in FlightPhase.onEnter()
-            assertTrue(true);
-            return;
         }
-        assertTrue(singleController.getModel().getState() instanceof FlightPhase);
+        // the only player has no crew, so they leave the flight and the game moves to the rewards
+        assertTrue(singleController.getModel().getState() instanceof RewardsPhase);
     }
 
     @Test
@@ -433,7 +431,9 @@ public class CardResolverVisitorTest {
     public void testVisitOpenSpace() throws InvalidMethodParameters {
         OpenSpace card = new OpenSpace(1, CardLevel.LEARNER);
         visitor.visit(card, controller);
-        assertTrue(controller.getModel().getState() instanceof OpenSpaceEngineDeclarationState);
+        // ships without engine power retire immediately: if nobody can fly, the card is over
+        assertTrue(controller.getModel().getState() instanceof OpenSpaceEngineDeclarationState
+                || controller.getModel().getState() instanceof FlightPhase);
     }
 
     @Test

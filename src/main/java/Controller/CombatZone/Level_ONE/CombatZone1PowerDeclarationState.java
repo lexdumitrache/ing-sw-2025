@@ -113,7 +113,7 @@ public class CombatZone1PowerDeclarationState extends State {
             throw new InvalidParameters("Not enough batteries to declare this amount");
         }
         if(worst < 0){
-            if(amount == player.getShipBoard().getCondensedShip().getBaseThrust()){
+            if(amount == player.getShipBoard().getCondensedShip().getBasePower()){
                 context.addSpecialPlayer(player);
                 context.removePlayer(player);
                 if(context.getPlayers().isEmpty()){
@@ -129,7 +129,7 @@ public class CombatZone1PowerDeclarationState extends State {
             }
 
         } else {
-            if(amount == player.getShipBoard().getCondensedShip().getBaseThrust()){
+            if(amount == player.getShipBoard().getCondensedShip().getBasePower()){
                 if(amount < worst){
                     if (context.getSpecialPlayers().getFirst() != null) {
                         context.removeSpecialPlayer(context.getSpecialPlayers().getFirst());

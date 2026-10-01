@@ -90,7 +90,7 @@ public class BatteryCompartment extends SpaceshipComponent {
     @Override
     public void removed() {
         if(!getShipBoard().getCondensedShip().getBatteryCompartments().contains(this)){
-            throw new RuntimeException("Battery Compartment not found in the ship.");
+            return; // already removed: a destroyed tile can also be detached with the rest of its section
         } else {
             getShipBoard().getCondensedShip().removeBatteryCompartment(this);
         }

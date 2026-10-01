@@ -184,7 +184,8 @@ public class CargoHoldTest {
         cargo.removed();
         assertFalse(ship.getCondensedShip().getCargoHolds().contains(cargo));
         
-        assertThrows(RuntimeException.class, cargo::removed);
+        // removing it again does nothing (a destroyed tile can also be detached with its section)
+        assertDoesNotThrow(cargo::removed);
     }
 
     @Test

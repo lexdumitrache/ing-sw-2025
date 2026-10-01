@@ -81,7 +81,7 @@ public class CombatZone2CheckShipState extends State {
 
     public List<String> getAvailableCommands(){
         return List.of(
-            "deleteComponent"
+            "DeleteComponent"
         );
     }
 }

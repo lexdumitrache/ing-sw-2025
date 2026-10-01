@@ -87,7 +87,8 @@ public class AlienLifeSupportTest {
         support.removed();
         assertFalse(ship.getCondensedShip().getAlienSupports().contains(support));
         
-        assertThrows(RuntimeException.class, support::removed);
+        // removing it again does nothing (a destroyed tile can also be detached with its section)
+        assertDoesNotThrow(support::removed);
     }
 
     @Test

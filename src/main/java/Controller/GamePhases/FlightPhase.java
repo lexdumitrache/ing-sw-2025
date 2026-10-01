@@ -1,5 +1,6 @@
 package Controller.GamePhases;
 
+import Model.Board.FlightBoard;
 import Controller.Controller;
 import Controller.Exceptions.InvalidContextualAction;
 import Controller.Exceptions.InvalidParameters;
@@ -29,16 +30,23 @@ public class FlightPhase extends State {
      */
     @Override
     public void onEnter() {
-        for(Player p: this.getController().getModel().getFlightBoard().getTurnOrder()){
-            if(p.getShipBoard().getCondensedShip().getTotalHumans() == 0 || getController().getModel().getFlightBoard().getDubbedPlayers().contains(p)){
-                this.getController().getModel().getFlightBoard().removePlayingPlayer(p);
-            }
+        final FlightBoard flightBoard = this.getController().getModel().getFlightBoard();
+        final Player[] flying = flightBoard.getTurnOrder();
+        if(flying.length == 0){
+            return;
+        }
 
-            CardDeck deck;
-            deck = this.getController().getModel().getFlightBoard().getUpcomingCardDeck();
-            if(deck.peekCards().isEmpty() || this.getController().getModel().getFlightBoard().getTurnOrder().length == 0){
-                this.getController().getModel().setState(new RewardsPhase(this.getController()));
+        // ships without humans and lapped ships leave the flight
+        for(Player p: flying){
+            if(p.getShipBoard().getCondensedShip().getTotalHumans() == 0 || flightBoard.getDubbedPlayers().contains(p)){
+                flightBoard.removePlayingPlayer(p);
             }
+        }
+
+        // checked once, after the loop: entering RewardsPhase awards the final credits
+        final CardDeck deck = flightBoard.getUpcomingCardDeck();
+        if((deck != null && deck.peekCards().isEmpty()) || flightBoard.getTurnOrder().length == 0){
+            this.getController().getModel().setState(new RewardsPhase(this.getController()));
         }
     }
 
@@ -61,6 +69,11 @@ public class FlightPhase extends State {
         }
         CardDeck deck;
         deck = controller.getModel().getFlightBoard().getUpcomingCardDeck();
+        if(deck.peekCards().isEmpty()){
+            // no cards left: the flight is over
+            controller.getModel().setState(new RewardsPhase(controller));
+            return;
+        }
         AdventureCardFilip card = deck.popCard();
         controller.getModel().setCurrentCardImagePath(card.getImagePath());
         card.accept(new CardResolverVisitor(), controller);

@@ -1,5 +1,8 @@
 package Controller.OpenSpace;
 
+import java.util.ArrayList;
+import Model.Ship.CondensedShip;
+import Model.Board.FlightBoard;
 import Controller.Context;
 import Controller.Controller;
 import Controller.Enums.DoubleType;
@@ -38,13 +41,24 @@ public class OpenSpaceEngineDeclarationState extends State {
 
     @Override
     public void onEnter() {
-        for(Player p : context.getPlayers()) {
-            if (p.getShipBoard().getCondensedShip().getTotalBatteries() == 0 && p.getShipBoard().getCondensedShip().getBaseThrust() == 0) {
-                context.getController().getModel().getFlightBoard().removePlayingPlayer(p);
-            } else if (p.getShipBoard().getCondensedShip().getTotalBatteries() == 0 && p.getShipBoard().getCondensedShip().getAliens().hasBrownAlien() &&
-            p.getShipBoard().getCondensedShip().getBaseThrust() == 2) {
-                context.getController().getModel().getFlightBoard().removePlayingPlayer(p);
+        // a ship without engine power cannot cross open space: it retires from the flight
+        final FlightBoard flightBoard = context.getController().getModel().getFlightBoard();
+        for(Player p : new ArrayList<>(context.getPlayers())) {
+            final CondensedShip ship = p.getShipBoard().getCondensedShip();
+            final boolean noEngines = ship.getTotalBatteries() == 0 && ship.getBaseThrust() == 0;
+            final boolean onlyBrownAlien = ship.getTotalBatteries() == 0 && ship.getAliens().hasBrownAlien() && ship.getBaseThrust() == 2;
+            if (noEngines || onlyBrownAlien) {
+                if (flightBoard.getFlyingPlayers().contains(p)) {
+                    flightBoard.removePlayingPlayer(p);
+                }
+                context.removePlayer(p);
             }
+        }
+
+        if (context.getPlayers().isEmpty()) {
+            context.getController().getModel().setState(new FlightPhase(context.getController()));
+        } else {
+            this.setPlayerInTurn(context.getPlayers().getFirst());
         }
     }
 

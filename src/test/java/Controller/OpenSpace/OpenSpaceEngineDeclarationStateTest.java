@@ -66,8 +66,8 @@ class OpenSpaceEngineDeclarationStateTest {
 
     @Test
     void testOnEnter() {
-        // This test expects an exception due to player not found in flight board
-        assertThrows(Exception.class, () -> state.onEnter());
+        // ships without engine power retire from the flight; entering the state must not crash
+        assertDoesNotThrow(() -> state.onEnter());
     }
 
     @Test

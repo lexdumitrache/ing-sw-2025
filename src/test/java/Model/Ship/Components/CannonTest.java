@@ -47,7 +47,8 @@ public class CannonTest {
         cannon.removed();
         assertFalse(ship.getCondensedShip().getCannons().contains(cannon));
         
-        assertThrows(RuntimeException.class, cannon::removed);
+        // removing it again does nothing (a destroyed tile can also be detached with its section)
+        assertDoesNotThrow(cannon::removed);
     }
 
     @Test
@@ -156,8 +157,8 @@ public class CannonTest {
         ShipBoard ship = new ShipBoard();
         cannon.setShipBoard(ship);
         
-        RuntimeException exception = assertThrows(RuntimeException.class, cannon::removed);
-        assertEquals("Cannon not found in the ship.", exception.getMessage());
+        // removing a tile that is not on the ship any more does nothing
+        assertDoesNotThrow(cannon::removed);
     }
 
     @Test

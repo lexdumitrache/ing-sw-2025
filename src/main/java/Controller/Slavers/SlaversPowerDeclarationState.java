@@ -126,7 +126,7 @@ public class SlaversPowerDeclarationState extends State {
                 
             }
         }else{
-            if(amount == player.getShipBoard().getCondensedShip().getBaseThrust()){
+            if(amount == player.getShipBoard().getCondensedShip().getBasePower()){
                 if(amount > context.getPower()){
                     controller.getModel().setState(new SlaversRewardsState(context));
                 } else if(amount == context.getPower()){

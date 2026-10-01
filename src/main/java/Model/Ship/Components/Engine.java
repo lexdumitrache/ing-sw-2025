@@ -70,7 +70,7 @@ public class Engine extends SpaceshipComponent {
     @Override
     public void removed() {
         if(!getShipBoard().getCondensedShip().getEnginesList().contains(this)){
-            throw new RuntimeException("Cargo Hold not found in the ship.");
+            return; // already removed: a destroyed tile can also be detached with the rest of its section
         } else {
             getShipBoard().getCondensedShip().getEnginesList().remove(this);
             if(!isDouble){

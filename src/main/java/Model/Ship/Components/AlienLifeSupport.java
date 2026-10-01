@@ -85,7 +85,7 @@ public class AlienLifeSupport extends SpaceshipComponent {
     @Override
     public void removed() {
         if(!getShipBoard().getCondensedShip().getAlienSupports().contains(this)){
-            throw new RuntimeException("Alien Support not found in the ship.");
+            return; // already removed: a destroyed tile can also be detached with the rest of its section
         } else {
             getShipBoard().getCondensedShip().removeAlienSupport(this);
         }

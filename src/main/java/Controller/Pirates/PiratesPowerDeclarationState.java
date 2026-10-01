@@ -133,7 +133,7 @@ public class PiratesPowerDeclarationState extends State {
                 
             }
         } else { //se non perdi
-            if(amount == player.getShipBoard().getCondensedShip().getBaseThrust()){
+            if(amount == player.getShipBoard().getCondensedShip().getBasePower()){
                 if(amount > context.getPower()){
                     controller.getModel().setState(new PiratesRewardState(context));
                     

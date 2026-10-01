@@ -143,7 +143,7 @@ public class CargoHold extends SpaceshipComponent {
     @Override
     public void removed() {
         if(!getShipBoard().getCondensedShip().getCargoHolds().contains(this)){
-            throw new RuntimeException("Cargo Hold not found in the ship.");
+            return; // already removed: a destroyed tile can also be detached with the rest of its section
         } else {
             getShipBoard().getCondensedShip().removeCargoHold(this);
         }

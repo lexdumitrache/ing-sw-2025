@@ -172,7 +172,8 @@ public class CabinTest {
         cabin.removed();
         assertFalse(ship.getCondensedShip().getCabins().contains(cabin));
         
-        assertThrows(RuntimeException.class, cabin::removed);
+        // removing it again does nothing (a destroyed tile can also be detached with its section)
+        assertDoesNotThrow(cabin::removed);
     }
 
     @Test
