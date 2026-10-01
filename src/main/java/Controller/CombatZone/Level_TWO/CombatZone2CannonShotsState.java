@@ -24,6 +24,28 @@ import java.util.Random;
  */
 public class CombatZone2CannonShotsState extends State {
 
+    /**
+     * Starts the last line of the card: the flying player with the fewest crew is hit by the cannon shots
+     * (on a tie, the player ahead).
+     */
+    public static void startCrewLine(Context context) {
+        final Controller controller = context.getController();
+        final Player[] order = controller.getModel().getFlightBoard().getTurnOrder();
+        if (order.length == 0) {
+            controller.getModel().setState(new FlightPhase(controller));
+            return;
+        }
+        Player fewest = order[0];
+        for (Player player : order) {
+            if (player.getShipBoard().getCondensedShip().getTotalCrew() < fewest.getShipBoard().getCondensedShip().getTotalCrew()) {
+                fewest = player;
+            }
+        }
+        context.startNewLine();
+        context.addSpecialPlayer(fewest);
+        controller.getModel().setState(new CombatZone2CannonShotsState(context));
+    }
+
     public CombatZone2CannonShotsState(Context context) {
         super(context);
         this.setPlayerInTurn(context.getSpecialPlayers().getFirst());

@@ -100,9 +100,8 @@ public class Cabin extends SpaceshipComponent {
                 }
 
             }
-        } else {
-            throw new IllegalArgumentException("Can't decrement canContainBrown below zero");
         }
+        // already 0: e.g. the central cabin, which never hosts aliens even next to a life support
     }
 
     public void decrementCanContainPurple() {
@@ -116,9 +115,8 @@ public class Cabin extends SpaceshipComponent {
                 }
 
             }
-        } else {
-            throw new IllegalArgumentException("Can't decrement canContainPurple below zero");
         }
+        // already 0: e.g. the central cabin, which never hosts aliens even next to a life support
     }
 
     public void setOccupants(Crewmates occupants) {

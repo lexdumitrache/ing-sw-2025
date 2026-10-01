@@ -199,7 +199,7 @@ class CombatZone2ManageShotStateTest {
     void testGetAvailableCommands() {
         List<String> commands = state.getAvailableCommands();
         assertEquals(2, commands.size());
-        assertTrue(commands.contains("EndTurn"));
+        assertTrue(commands.contains("End"));
         assertTrue(commands.contains("UseBattery"));
     }
 }

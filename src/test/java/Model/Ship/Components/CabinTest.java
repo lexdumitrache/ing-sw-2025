@@ -103,7 +103,9 @@ public class CabinTest {
         cabin.decrementCanContainBrown();
         assertFalse(cabin.getCanContainBrown());
         
-        assertThrows(IllegalArgumentException.class, cabin::decrementCanContainBrown);
+        // already at 0 (e.g. the central cabin next to a life support that gets destroyed): stays at 0
+        assertDoesNotThrow(cabin::decrementCanContainBrown);
+        assertFalse(cabin.getCanContainBrown());
     }
 
     @Test
@@ -119,7 +121,9 @@ public class CabinTest {
         cabin.decrementCanContainPurple();
         assertFalse(cabin.getCanContainPurple());
         
-        assertThrows(IllegalArgumentException.class, cabin::decrementCanContainPurple);
+        // already at 0 (e.g. the central cabin next to a life support that gets destroyed): stays at 0
+        assertDoesNotThrow(cabin::decrementCanContainPurple);
+        assertFalse(cabin.getCanContainPurple());
     }
 
     @Test

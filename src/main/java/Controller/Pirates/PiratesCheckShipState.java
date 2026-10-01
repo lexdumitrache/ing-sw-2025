@@ -33,7 +33,7 @@ public class PiratesCheckShipState extends State {
         super(context);
         this.number = number;
         this.turn = turn;
-        this.setPlayerInTurn(context.getSpecialPlayers().getFirst());
+        this.setPlayerInTurn(context.getSpecialPlayers().get(turn));
     }
 
     /**
@@ -52,7 +52,7 @@ public class PiratesCheckShipState extends State {
     public void deleteComponent(String playerName, Coordinates coordinates) throws InvalidMethodParameters, InvalidParameters {
         Controller controller = context.getController();
         Player player = controller.getModel().getPlayer(playerName);
-        if (!player.equals(context.getSpecialPlayers().getFirst())) {
+        if (!player.equals(context.getSpecialPlayers().get(turn))) {
             
             throw new InvalidParameters("It's not the player's turn");
         }
@@ -72,7 +72,7 @@ public class PiratesCheckShipState extends State {
         if (player.getShipBoard().checkIntegrity()) {
             CannonShot shot = (CannonShot) context.getProjectile(0);
             turn++;
-            if (turn > context.getSpecialPlayers().size()) {  //tutti i giocatori sono stati colpiti da questo shot
+            if (turn >= context.getSpecialPlayers().size()) {  //tutti i giocatori sono stati colpiti da questo shot
                 context.removeProjectile(shot);
                 if (context.getProjectiles().isEmpty()) {     //tutti i colpi sono stati sparati
                     controller.getModel().setState(new FlightPhase(controller));

@@ -411,6 +411,33 @@ public class Context {
         return players;
     }
 
+    /** Lowest value declared so far in the current combat zone line (meaningless while specialPlayers is empty). */
+    private double lowestDeclared;
+
+    /**
+     * Records a final power declaration in a combat zone line: the player with the lowest value is the one
+     * penalized (the only special player). On a tie the player ahead keeps the penalty, since players declare
+     * in turn order and only a strictly lower value replaces them.
+     */
+    public void recordDeclaration(Player player, double value) {
+        if (specialPlayers == null) {
+            specialPlayers = new ArrayList<>();
+        }
+        if (specialPlayers.isEmpty() || value < lowestDeclared) {
+            specialPlayers.clear();
+            specialPlayers.add(player);
+            lowestDeclared = value;
+        }
+    }
+
+    /**
+     * Starts the next line of a combat zone: every flying player declares again, in turn order.
+     */
+    public void startNewLine() {
+        this.players = new ArrayList<>(Arrays.asList(controller.getModel().getFlightBoard().getTurnOrder()));
+        this.specialPlayers = new ArrayList<>();
+    }
+
     public void setPlayers(List<Player> players) {
         this.players = players;
     }

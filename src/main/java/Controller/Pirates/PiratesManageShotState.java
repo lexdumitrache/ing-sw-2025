@@ -84,6 +84,7 @@ public class PiratesManageShotState extends State{
                         player.addJunk();
                     }
                 }
+                break;
             case Side.RIGHT:
                 for (int i = 10; (i >= 4)&&(!hit); i--) {
                     Coordinates coordinates = new Coordinates(number, i);
@@ -94,6 +95,7 @@ public class PiratesManageShotState extends State{
                         player.addJunk();
                     }
                 }
+                break;
             case Side.LEFT:
                 for (int i = 4; (i <= 10)&&(!hit); i++) {
                     Coordinates coordinates = new Coordinates(number, i);
@@ -104,6 +106,7 @@ public class PiratesManageShotState extends State{
                         player.addJunk();
                     }
                 }
+                break;
             case Side.REAR:
                 for (int i = 9; (i >= 5)&&(!hit); i--) {
                     Coordinates coordinates = new Coordinates(i, number);
@@ -114,6 +117,7 @@ public class PiratesManageShotState extends State{
                         player.addJunk();
                     }
                 }
+                break;
         }
 
         if(hit){
@@ -124,7 +128,7 @@ public class PiratesManageShotState extends State{
             }
         }
         turn++;
-        if (turn > context.getSpecialPlayers().size()) {  //tutti i giocatori sono stati colpiti da questo shot
+        if (turn >= context.getSpecialPlayers().size()) {  //tutti i giocatori sono stati colpiti da questo shot
             context.removeProjectile(shot);
             if (context.getProjectiles().isEmpty()) {     //tutti i colpi sono stati sparati
                 controller.getModel().setState(new FlightPhase(controller));

@@ -81,21 +81,21 @@ public class SecondCombatZone2BatteryRemovalState extends State {
         compartment.removeBattery();
         amount--;
         if(amount == 0){
-            int numPlayers = controller.getModel().getFlightBoard().getTurnOrder().length;
-            Player currentPlayer = controller.getModel().getFlightBoard().getTurnOrder()[0];
-            for(int i = 0; i<numPlayers-1; i++){
-                Player nextPlayer = controller.getModel().getFlightBoard().getTurnOrder()[(i+1)];
-                if(nextPlayer.getShipBoard().getCondensedShip().getTotalCrew() > currentPlayer.getShipBoard().getCondensedShip().getTotalCrew()){
-                    currentPlayer = nextPlayer;
-                }
-            }
-            context.addSpecialPlayer(currentPlayer);
-            controller.getModel().setState(new CombatZone2CannonShotsState(context));
-            
+            CombatZone2CannonShotsState.startCrewLine(context);
         }
         else{       //rimuovi altra batteria
             controller.getModel().setState(new SecondCombatZone2BatteryRemovalState(context, amount));
             
+        }
+    }
+
+    /**
+     * A player without goods loses batteries instead; a player without batteries either has paid all they can.
+     */
+    @Override
+    public void onEnter() {
+        if (context.getSpecialPlayers().getFirst().getShipBoard().getCondensedShip().getTotalBatteries() == 0) {
+            CombatZone2CannonShotsState.startCrewLine(context);
         }
     }
 

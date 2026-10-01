@@ -21,19 +21,18 @@ import java.util.List;
  * and if the declaration is valid, it transitions to the next state for battery removal or crew removal.</p>
  */
 public class CombatZone2EngineDeclarationState extends State {
-   
-    private double worst;
 
     public CombatZone2EngineDeclarationState(Context context) {
         super(context);
-        this.worst = -1;
         this.setPlayerInTurn(context.getPlayers().getFirst());
     }
 
+    /**
+     * @deprecated the lowest declaration is now tracked by the context; worst is ignored
+     */
+    @Deprecated
     public CombatZone2EngineDeclarationState(Context context, double worst) {
-        super(context);
-        this.worst = worst;
-        this.setPlayerInTurn(context.getPlayers().getFirst());
+        this(context);
     }
 
     /**
@@ -99,41 +98,25 @@ public class CombatZone2EngineDeclarationState extends State {
             throw new InvalidParameters("Not enough double engines to declare this amount");
         }
 
-        if(worst < 0){
-            if(amount == player.getShipBoard().getCondensedShip().getBaseThrust()){
-                context.addSpecialPlayer(player);
-                context.removePlayer(player);
-                if(context.getPlayers().isEmpty()){
-                    controller.getModel().setState(new CombatZone2GoodsRemovalState(context));
-                    
-                } else {
-                    controller.getModel().setState(new CombatZone2EngineDeclarationState(context, worst));
-                    
-                }
-            } else {
-                controller.getModel().setState(new CombatZone2_E_BatteryRemovalState(context, amount, batteries));
-                
-            }
+        if (amount == player.getShipBoard().getCondensedShip().getBaseThrust()) {
+            // no double engine activated: the declaration is final
+            finishDeclaration(context, player, amount);
         } else {
-            if (amount == player.getShipBoard().getCondensedShip().getBaseThrust()) {
-                if(amount < worst){
-                    context.removeSpecialPlayer(context.getSpecialPlayers().getFirst());
-                    context.addSpecialPlayer(player);
-                    worst = amount;
-                }
-                context.removePlayer(player);
-                if(context.getPlayers().isEmpty()){
-                    controller.getModel().setState(new CombatZone2GoodsRemovalState(context));
-                    
-                } else {
-                    controller.getModel().setState(new CombatZone2EngineDeclarationState(context, worst));
-                    
-                }
-            } else {
-                controller.getModel().setState(new CombatZone2_E_BatteryRemovalState(context, amount, batteries, worst));
-                
-            }
+            controller.getModel().setState(new CombatZone2_E_BatteryRemovalState(context, amount, batteries));
+        }
+    }
 
+    /**
+     * Records a final engine power declaration. When everyone has declared, the weakest player loses goods.
+     */
+    static void finishDeclaration(Context context, Player player, double power) {
+        final Controller controller = context.getController();
+        context.recordDeclaration(player, power);
+        context.removePlayer(player);
+        if (context.getPlayers().isEmpty()) {
+            controller.getModel().setState(new CombatZone2GoodsRemovalState(context));
+        } else {
+            controller.getModel().setState(new CombatZone2EngineDeclarationState(context));
         }
     }
 

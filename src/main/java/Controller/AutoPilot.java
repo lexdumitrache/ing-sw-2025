@@ -33,10 +33,13 @@ final class AutoPilot {
     private static final int MAX_MOVES = 50;
 
     /** Commands with no arguments that end a decision passively, best first. */
-    private static final List<String> PASSIVE = List.of("End", "EndTurn", "SkipReward", "ThrowDices", "PickNextCard");
+    private static final List<String> PASSIVE = List.of("End", "SkipReward", "ThrowDices", "PickNextCard");
 
     /** When false, an absent leader does not draw the next card (the game waits until they retire). */
     private static boolean drawCards = false;
+
+    /** How many times a card had to be skipped because no move was legal (each one is a bug in a card). */
+    static int cardsSkipped = 0;
 
     /** Prints why moves are rejected (for debugging). */
     static boolean verbose = false;
@@ -93,8 +96,15 @@ final class AutoPilot {
         if (waiting.isEmpty() || state == null || state.getPlayerInTurn() == null) {
             return false;
         }
+        if (verbose) {
+            // show why every move was rejected (they are rejected again, so this changes nothing)
+            for (String name : waiting) {
+                makeMove(controller, name);
+            }
+        }
         System.err.println("Auto-pilot found no legal move for " + waiting.getFirst() + " in "
                 + state.getClass().getSimpleName() + " (game " + controller.getGameID() + "): skipping the rest of this card");
+        cardsSkipped++;
         controller.getModel().setState(new FlightPhase(controller));
         return true;
     }

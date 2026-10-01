@@ -101,24 +101,7 @@ public class CombatZone2_P_BatteryRemovalState extends State {
             batteries--;
         }
         if(batteries == 0){
-            if(context.getSpecialPlayers().isEmpty()){
-                context.addSpecialPlayer(player);
-            } else {
-                if(declaredPower < worst){
-                    context.removeSpecialPlayer(context.getSpecialPlayers().getFirst());
-                    context.addSpecialPlayer(player);
-                    worst = declaredPower;
-                }
-            }
-            context.removePlayer(player);
-            if(context.getPlayers().isEmpty()){
-                controller.getModel().getFlightBoard().deltaFlightDays(context.getSpecialPlayers().getFirst(), -context.getDaysLost());
-                controller.getModel().setState(new CombatZone2EngineDeclarationState(context));
-                
-            } else {
-                controller.getModel().setState(new CombatZone2PowerDeclarationState(context, worst));
-                
-            }
+            CombatZone2PowerDeclarationState.finishDeclaration(context, player, declaredPower);
         }
         else{       //rimuovi altra batteria
             controller.getModel().setState(new CombatZone2_P_BatteryRemovalState(context, declaredPower, batteries));

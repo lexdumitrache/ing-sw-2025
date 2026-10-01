@@ -75,6 +75,7 @@ public class CombatZone2ManageShotState extends State {
                         player.addJunk();
                     }
                 }
+                break;
             case Side.RIGHT:
                 for (int i = 10; (i >= 4)&&(!hit); i--) {
                     Coordinates coordinates = new Coordinates(number, i);
@@ -85,6 +86,7 @@ public class CombatZone2ManageShotState extends State {
                         player.addJunk();
                     }
                 }
+                break;
             case Side.LEFT:
                 for (int i = 4; (i <= 10)&&(!hit); i++) {
                     Coordinates coordinates = new Coordinates(number, i);
@@ -95,6 +97,7 @@ public class CombatZone2ManageShotState extends State {
                         player.addJunk();
                     }
                 }
+                break;
             case Side.REAR:
                 for (int i = 9; (i >= 5)&&(!hit); i--) {
                     Coordinates coordinates = new Coordinates(i, number);
@@ -105,6 +108,7 @@ public class CombatZone2ManageShotState extends State {
                         player.addJunk();
                     }
                 }
+                break;
         }
 
         if(hit){
@@ -199,7 +203,7 @@ public class CombatZone2ManageShotState extends State {
     }
 
     public List<String> getAvailableCommands(){
-        return List.of( "EndTurn",
+        return List.of( "End",
                         "UseBattery");
     }
 }

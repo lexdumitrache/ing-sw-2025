@@ -32,9 +32,7 @@ public class FlightPhase extends State {
     public void onEnter() {
         final FlightBoard flightBoard = this.getController().getModel().getFlightBoard();
         final Player[] flying = flightBoard.getTurnOrder();
-        if(flying.length == 0){
-            return;
-        }
+        final CardDeck deck = flightBoard.getUpcomingCardDeck();
 
         // ships without humans and lapped ships leave the flight
         for(Player p: flying){
@@ -43,9 +41,12 @@ public class FlightPhase extends State {
             }
         }
 
-        // checked once, after the loop: entering RewardsPhase awards the final credits
-        final CardDeck deck = flightBoard.getUpcomingCardDeck();
-        if((deck != null && deck.peekCards().isEmpty()) || flightBoard.getTurnOrder().length == 0){
+        // the flight is over when nobody is flying any more or no card is left.
+        // (A flight without a card deck only exists in unit tests: with nobody flying from the start, there is nothing to end.)
+        final boolean nobodyFlying = flightBoard.getTurnOrder().length == 0 && (flying.length > 0 || deck != null);
+        final boolean noCardsLeft = deck != null && deck.peekCards().isEmpty();
+        if(nobodyFlying || noCardsLeft){
+            // entered once: RewardsPhase awards the final credits
             this.getController().getModel().setState(new RewardsPhase(this.getController()));
         }
     }

@@ -111,8 +111,10 @@ class CombatZone2GoodsRemovalStateTest {
     void testMoveGood_InvalidComponent() {
         Coordinates invalidCoords = new Coordinates(0, 0);
         
-        ArrayIndexOutOfBoundsException exception = assertThrows(ArrayIndexOutOfBoundsException.class,
-            () -> state.moveGood("Player1", invalidCoords, null, 0, 0));
+        // without goods (nor batteries) to lose, the card moves on to its last line instead of crashing
+        assertDoesNotThrow(() -> state.moveGood("Player1", invalidCoords, null, 0, 0));
+        assertTrue(controller.getModel().getState() instanceof CombatZone2CannonShotsState
+                || controller.getModel().getState() instanceof FlightPhase);
         
         // Error state may not be set consistently
     }
@@ -122,8 +124,10 @@ class CombatZone2GoodsRemovalStateTest {
         // Remove the good first
         cargoHold.removeGood(0);
         
-        ArrayIndexOutOfBoundsException exception = assertThrows(ArrayIndexOutOfBoundsException.class,
-            () -> state.moveGood("Player1", cargoHoldCoords, null, 0, 0));
+        // without goods (nor batteries) to lose, the card moves on to its last line instead of crashing
+        assertDoesNotThrow(() -> state.moveGood("Player1", cargoHoldCoords, null, 0, 0));
+        assertTrue(controller.getModel().getState() instanceof CombatZone2CannonShotsState
+                || controller.getModel().getState() instanceof FlightPhase);
         
         // Error state may not be set consistently
     }
@@ -136,8 +140,10 @@ class CombatZone2GoodsRemovalStateTest {
         // Add another good
         cargoHold.addGood(Good.BLUE);
         
-        ArrayIndexOutOfBoundsException exception = assertThrows(ArrayIndexOutOfBoundsException.class,
-            () -> multiState.moveGood("Player1", cargoHoldCoords, null, 0, 0));
+        // without goods (nor batteries) to lose, the card moves on to its last line instead of crashing
+        assertDoesNotThrow(() -> multiState.moveGood("Player1", cargoHoldCoords, null, 0, 0));
+        assertTrue(controller.getModel().getState() instanceof CombatZone2CannonShotsState
+                || controller.getModel().getState() instanceof FlightPhase);
         
         // Error state may not be set consistently
     }
@@ -186,8 +192,9 @@ class CombatZone2GoodsRemovalStateTest {
             // This should trigger the condition where goodCounter total is 0
             testState.moveGood("Player1", cargoHoldCoords, null, 0, 0);
             
-            // Should transition to CombatZone2CannonShotsState
-            assertTrue(controller.getModel().getState() instanceof CombatZone2CannonShotsState);
+            // Should move on to the last line (or end the card if nobody is flying)
+            assertTrue(controller.getModel().getState() instanceof CombatZone2CannonShotsState
+                    || controller.getModel().getState() instanceof FlightPhase);
         } catch (Exception e) {
             // If reflection fails, just verify the method can be called
             assertThrows(Exception.class, () -> state.moveGood("Player1", cargoHoldCoords, null, 0, 0));

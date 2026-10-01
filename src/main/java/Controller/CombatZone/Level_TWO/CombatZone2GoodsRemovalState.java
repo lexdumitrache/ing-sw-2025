@@ -125,20 +125,7 @@ public class CombatZone2GoodsRemovalState extends State {
                 controller.getModel().setState(new SecondCombatZone2BatteryRemovalState(context, amount));
                 
             } else {    //se no non gli succede niente
-
-                int numPlayers = controller.getModel().getFlightBoard().getTurnOrder().length;
-                Player currentPlayer = controller.getModel().getFlightBoard().getTurnOrder()[0];
-                for(int i = 0; i<numPlayers; i++){
-                    Player nextPlayer = controller.getModel().getFlightBoard().getTurnOrder()[(i+1)];
-                    if(nextPlayer.getShipBoard().getCondensedShip().getTotalCrew() > currentPlayer.getShipBoard().getCondensedShip().getTotalCrew()){
-                        currentPlayer = nextPlayer;
-                    }
-                }
-                context.addSpecialPlayer(currentPlayer);
-                controller.getModel().setState(new CombatZone2CannonShotsState(context));
-                
-
-
+                CombatZone2CannonShotsState.startCrewLine(context);
             }
             return;
         }
@@ -163,10 +150,7 @@ public class CombatZone2GoodsRemovalState extends State {
         cargoHold.removeGood(oldIndex);
         amount--;
         if(amount == 0){
-            List<Player> allPlayers= new ArrayList<>(Arrays.asList(controller.getModel().getFlightBoard().getTurnOrder()));
-            context.setPlayers(allPlayers);
-            controller.getModel().setState(new CombatZone2CannonShotsState(context));
-            
+            CombatZone2CannonShotsState.startCrewLine(context);
         } else {
             controller.getModel().setState(new CombatZone2GoodsRemovalState(context, amount));
             

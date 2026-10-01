@@ -1,5 +1,6 @@
 package Controller.CombatZone.Level_TWO;
 
+import Controller.GamePhases.FlightPhase;
 import Controller.CombatZone.Level_ONE.CombatZone1_P_BatteryRemovalState;
 import Controller.Context;
 import Controller.Controller;
@@ -21,19 +22,17 @@ import java.util.List;
  */
 public class CombatZone2PowerDeclarationState extends State {
 
-    /**
-     * The declared worst firepower among the players, used to determine the player with the lowest power.
-     */
-    private double worst = -1;
-
     public CombatZone2PowerDeclarationState(Context context) {
         super(context);
         this.setPlayerInTurn(context.getPlayers().getFirst());
     }
 
+    /**
+     * @deprecated the lowest declaration is now tracked by the context; worst is ignored
+     */
+    @Deprecated
     public CombatZone2PowerDeclarationState(Context context, double worst) {
-        super(context);
-        this.worst = worst;
+        this(context);
     }
 
     /**
@@ -116,46 +115,32 @@ public class CombatZone2PowerDeclarationState extends State {
             
             throw new InvalidParameters("Not enough batteries to declare this amount");
         }
-        if(worst < 0){
-            if(amount == player.getShipBoard().getCondensedShip().getBasePower()){
-                context.addSpecialPlayer(player);
-                context.removePlayer(player);
-                if(context.getPlayers().isEmpty()){
-                    controller.getModel().getFlightBoard().deltaFlightDays(context.getSpecialPlayers().getFirst(), -context.getDaysLost());
-                    controller.getModel().setState(new CombatZone2EngineDeclarationState(context));
-                    
-                } else {
-                    controller.getModel().setState(new CombatZone2PowerDeclarationState(context));
-                    
-                }
-            } else {
-                controller.getModel().setState(new CombatZone2_P_BatteryRemovalState(context, amount, 0));
-                
-            }
-
+        if (amount == player.getShipBoard().getCondensedShip().getBasePower()) {
+            // no double cannon activated: the declaration is final
+            finishDeclaration(context, player, amount);
         } else {
-            if(amount == player.getShipBoard().getCondensedShip().getBasePower()){
-                if(amount < worst){
-                    if (context.getSpecialPlayers().getFirst() != null) {
-                        context.removeSpecialPlayer(context.getSpecialPlayers().getFirst());
-                    }
-                    context.addSpecialPlayer(player);
-                    worst = amount;
-                }
-                context.removePlayer(player);
-                if(context.getPlayers().isEmpty()){
-                    controller.getModel().getFlightBoard().deltaFlightDays(context.getSpecialPlayers().getFirst(), -context.getDaysLost());
-                    controller.getModel().setState(new CombatZone2EngineDeclarationState(context));
-                    
-                } else {
-                    controller.getModel().setState(new CombatZone2PowerDeclarationState(context));
-                    
-                }
-            } else {
-                controller.getModel().setState(new CombatZone2_P_BatteryRemovalState(context, amount, 0, worst));
-                
-            }
+            controller.getModel().setState(new CombatZone2_P_BatteryRemovalState(context, amount, batteries));
+        }
+    }
 
+    /**
+     * Records a final fire power declaration. When everyone has declared, the weakest player loses flight days
+     * and the card moves on to the engine power line.
+     */
+    static void finishDeclaration(Context context, Player player, double power) throws InvalidMethodParameters {
+        final Controller controller = context.getController();
+        context.recordDeclaration(player, power);
+        context.removePlayer(player);
+        if (context.getPlayers().isEmpty()) {
+            controller.getModel().getFlightBoard().deltaFlightDays(context.getSpecialPlayers().getFirst(), -context.getDaysLost());
+            context.startNewLine();
+            if (context.getPlayers().isEmpty()) {
+                controller.getModel().setState(new FlightPhase(controller));
+            } else {
+                controller.getModel().setState(new CombatZone2EngineDeclarationState(context));
+            }
+        } else {
+            controller.getModel().setState(new CombatZone2PowerDeclarationState(context));
         }
     }
 

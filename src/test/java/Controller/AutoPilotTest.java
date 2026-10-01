@@ -125,7 +125,8 @@ public class AutoPilotTest {
     @ParameterizedTest
     @EnumSource(MatchLevel.class)
     public void testAbsentPlayersCanFinishAWholeGame(MatchLevel level) {
-        for (int game = 0; game < 5; game++) {
+        AutoPilot.cardsSkipped = 0;
+        for (int game = 0; game < 40; game++) {
             final Controller controller = TestStateManager.finishedBuildingAllValid(level).getController();
             final java.util.Set<String> everyone = new java.util.HashSet<>();
             controller.getModel().getPlayers().forEach(player -> everyone.add(player.getName()));
@@ -138,5 +139,6 @@ public class AutoPilotTest {
             assertInstanceOf(RewardsPhase.class, controller.getModel().getState(),
                     "game " + game + " got stuck in " + controller.getModel().getState().getClass().getSimpleName());
         }
+        assertEquals(0, AutoPilot.cardsSkipped, "some card could not be played to the end: a card has a bug");
     }
 }

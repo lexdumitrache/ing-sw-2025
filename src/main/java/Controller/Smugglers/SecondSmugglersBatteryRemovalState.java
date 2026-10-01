@@ -72,18 +72,35 @@ public class SecondSmugglersBatteryRemovalState extends State{
         compartment.removeBattery();
         context.removeRequiredGood();
         if(context.getRequiredGoods() == 0){
-            context.removeSpecialPlayer(player);
-            if(context.getSpecialPlayers().isEmpty()){
-                controller.getModel().setState(new FlightPhase(controller));
-                
-            } else {
-                context.setRequiredGoods(context.getDefaultAmount());
-                controller.getModel().setState(new SmugglersGoodsRemovalState(context));
-                
-            }
+            penaltyDone(player);
         } else {
             controller.getModel().setState(new SecondSmugglersBatteryRemovalState(context));
-            
+
+        }
+    }
+
+    /**
+     * A player without goods loses batteries instead; a player without batteries either has paid all they can.
+     */
+    @Override
+    public void onEnter() {
+        final Player player = context.getSpecialPlayers().getFirst();
+        if (player.getShipBoard().getCondensedShip().getTotalBatteries() == 0) {
+            penaltyDone(player);
+        }
+    }
+
+    /**
+     * Moves on to the next player hit by the smugglers, or back to the flight.
+     */
+    private void penaltyDone(Player player) {
+        final Controller controller = context.getController();
+        context.removeSpecialPlayer(player);
+        if(context.getSpecialPlayers().isEmpty()){
+            controller.getModel().setState(new FlightPhase(controller));
+        } else {
+            context.setRequiredGoods(context.getDefaultAmount());
+            controller.getModel().setState(new SmugglersGoodsRemovalState(context));
         }
     }
     @Override

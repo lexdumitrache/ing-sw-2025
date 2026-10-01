@@ -122,7 +122,7 @@ class PiratesCheckShipStateTest {
             fail("Failed to set projectiles: " + e.getMessage());
         }
         
-        state = new PiratesCheckShipState(context, 0, 1);
+        state = new PiratesCheckShipState(context, 0, 0); // the only player hit is at index 0
         
         state.deleteComponent("Player1", new Coordinates(6, 7));
         
@@ -147,7 +147,7 @@ class PiratesCheckShipStateTest {
             fail("Failed to set projectiles: " + e.getMessage());
         }
         
-        state = new PiratesCheckShipState(context, 0, 1);
+        state = new PiratesCheckShipState(context, 0, 0); // the only player hit is at index 0
         
         state.deleteComponent("Player1", new Coordinates(6, 7));
         
@@ -212,7 +212,7 @@ class PiratesCheckShipStateTest {
             fail("Failed to set projectiles: " + e.getMessage());
         }
         
-        state = new PiratesCheckShipState(context, 0, 1); // turn = 1, will become 2, and 2 > 1 is true
+        state = new PiratesCheckShipState(context, 0, 0); // the only player hit is at index 0
         
         state.deleteComponent("Player1", new Coordinates(6, 7));
         
