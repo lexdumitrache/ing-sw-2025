@@ -24,11 +24,12 @@ public class AutoPilotTest {
     @BeforeEach
     public void playImmediately() {
         Controller.setAutoPilotDelay(0);
+        Controller.setRetireDelay(Long.MAX_VALUE);
     }
 
     @AfterEach
-    public void restoreDelay() {
-        Controller.setAutoPilotDelay(15000);
+    public void restoreDelays() {
+        Controller.resetDisconnectionDelays();
     }
 
     private static void disconnectEveryone(Controller controller) {
@@ -85,15 +86,29 @@ public class AutoPilotTest {
     }
 
     @Test
-    public void testAbsentLeaderDrawsTheNextCard() {
+    public void testNoCardIsDrawnForAnAbsentLeader() {
         final Controller controller = TestStateManager.flightPhase2Players(MatchLevel.TRIAL).getController();
-        assertInstanceOf(FlightPhase.class, controller.getModel().getState());
         final String leader = controller.getModel().getFlightBoard().getTurnOrder()[0].getName();
 
         controller.playerDisconnected(leader);
-        autoPilotUntilIdle(controller);
 
-        assertNotNull(controller.getModel().getCurrentCardImagePath(), "the absent leader should have drawn a card");
+        assertFalse(controller.runAutoPilot(), "the game waits for the leader until they retire");
+        assertNull(controller.getModel().getCurrentCardImagePath());
+    }
+
+    @Test
+    public void testAbsentPlayerRetiresBetweenCards() {
+        final Controller controller = TestStateManager.flightPhase2Players(MatchLevel.TRIAL).getController();
+        final Player leader = controller.getModel().getFlightBoard().getTurnOrder()[0];
+        Controller.setRetireDelay(0);
+
+        controller.playerDisconnected(leader.getName());
+
+        assertTrue(controller.runAutoPilot());
+        assertFalse(controller.getModel().getFlightBoard().getFlyingPlayers().contains(leader));
+        assertTrue(controller.getModel().getFlightBoard().getFinishedFlightPlayers().contains(leader),
+                "a retired player still takes part in the final rewards");
+        assertInstanceOf(FlightPhase.class, controller.getModel().getState(), "the other player keeps flying");
     }
 
     @Test
@@ -112,9 +127,13 @@ public class AutoPilotTest {
     public void testAbsentPlayersCanFinishAWholeGame(MatchLevel level) {
         for (int game = 0; game < 5; game++) {
             final Controller controller = TestStateManager.finishedBuildingAllValid(level).getController();
-            disconnectEveryone(controller);
+            final java.util.Set<String> everyone = new java.util.HashSet<>();
+            controller.getModel().getPlayers().forEach(player -> everyone.add(player.getName()));
 
-            autoPilotUntilIdle(controller);
+            // let the auto-pilot draw the cards too, so every card gets played
+            for (int i = 0; i < 200 && AutoPilot.play(controller, everyone, true); i++) {
+                // keep playing
+            }
 
             assertInstanceOf(RewardsPhase.class, controller.getModel().getState(),
                     "game " + game + " got stuck in " + controller.getModel().getState().getClass().getSimpleName());

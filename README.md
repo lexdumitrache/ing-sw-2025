@@ -13,7 +13,7 @@ Play over the network with friends, through a graphical client or a text client.
 - **Graphical client** (JavaFX) using the original board and tile artwork
 - **Text client** that works in any terminal
 - **Networking** over TCP sockets or Java RMI, with several games running on the same server
-- **Resilient to disconnections:** if a player drops out, the game goes on without waiting for them, and they can log back in to take their seat again
+- **Resilient to disconnections:** if a player drops out the game goes on without them, and they can log back in to take their seat again
 
 ## Quick start
 
@@ -89,9 +89,16 @@ The **Flight board** tab shows where every rocket is, and who is acting.
 
 ### If someone loses their connection
 
-The server notices a lost connection within about 10 seconds. A player who leaves the lobby before the game starts is simply removed. During the game, the player keeps their seat: after a 15-second grace period an auto-pilot plays their turns in the most passive way allowed (declaring no extra power, skipping rewards, accepting penalties), so nobody is left waiting. A player who never got to build is given a ready-made ship.
+The server notices a lost connection within about 10 seconds. What happens next depends on the phase:
 
-To get back in, start the client again, connect to the same server and log in with **the same name**: you are taken straight back into your game. A game nobody is connected to is closed after two minutes.
+| When | What happens to the missing player |
+|---|---|
+| In the lobby | Removed from the game straight away |
+| Building the ship | After **30 seconds** their ship is finished as it is (a ready-made ship if they had not built anything) |
+| During a card | After **15 seconds** an auto-pilot makes their pending move in the most passive way allowed (no extra power, rewards skipped, penalties accepted), so nobody is left waiting |
+| Between cards | After **60 seconds** they retire from the flight, like *Leave race*: they keep their credits and sell their goods at half price at the end |
+
+To get back in, start the client again, connect to the same server and log in with **the same name**: you are taken straight back into your game. Come back within the grace period and you play on as if nothing happened. A game nobody is connected to is closed after two minutes.
 
 ## Text client
 

@@ -20,7 +20,9 @@ import Model.Ship.Components.SpaceshipComponent;
 import java.util.*;
 
 /**
- * Plays for players who are disconnected, so the game never waits for them forever.
+ * Plays for players who are disconnected, so the game does not wait for them while they may come back.
+ * It only finishes what the game is waiting for (building, crew placement, their step of the current card);
+ * it does not draw new cards: absent players retire between cards instead (see Controller).
  * It always makes the most passive move the rules allow: ending its turn, declaring no extra power,
  * skipping rewards, accepting penalties. Moves are tried in that order and the game rules reject the
  * illegal ones, so the auto-pilot does not need to know the details of every card.
@@ -32,6 +34,9 @@ final class AutoPilot {
 
     /** Commands with no arguments that end a decision passively, best first. */
     private static final List<String> PASSIVE = List.of("End", "EndTurn", "SkipReward", "ThrowDices", "PickNextCard");
+
+    /** When false, an absent leader does not draw the next card (the game waits until they retire). */
+    private static boolean drawCards = false;
 
     /** Prints why moves are rejected (for debugging). */
     static boolean verbose = false;
@@ -46,6 +51,15 @@ final class AutoPilot {
      * @return true if at least one move was made
      */
     static boolean play(Controller controller, Set<String> absent) {
+        return play(controller, absent, false);
+    }
+
+    /**
+     * @param drawCards true to also draw new cards for an absent leader, so that a game where everyone
+     *                  is absent is played to the end (used by tests to exercise every card)
+     */
+    static boolean play(Controller controller, Set<String> absent, boolean drawCards) {
+        AutoPilot.drawCards = drawCards;
         boolean moved = false;
         for (int i = 0; i < MAX_MOVES; i++) {
             final List<String> waiting = waitingOn(controller, absent);
@@ -97,7 +111,10 @@ final class AutoPilot {
         }
 
         if (state instanceof FlightPhase) {
-            // between cards the leader draws the next one
+            if (!drawCards) {
+                // between cards absent players are not played for: they retire after the grace period
+                return List.of();
+            }
             final Player[] order = game.getFlightBoard().getTurnOrder();
             return order.length > 0 && absent.contains(order[0].getName()) ? List.of(order[0].getName()) : List.of();
         }

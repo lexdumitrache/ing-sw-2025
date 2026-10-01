@@ -3,7 +3,10 @@ package Controller;
 import Controller.Commands.Command;
 import Controller.Enums.*;
 import Controller.Exceptions.*;
+import Controller.GamePhases.FlightPhase;
 import Controller.PreMatchLobby.LogInState;
+import Controller.RealTimeBuilding.BuildingState;
+import Controller.RealTimeBuilding.HourGlassFinishedState;
 import Controller.PreMatchLobby.OffState;
 // Import del modello
 import Controller.Server.Server;
@@ -27,8 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Controller implements Agent {
     /** How often connections are checked while no command arrives. */
     private static final long CONNECTION_CHECK_MS = 1000;
-    /** How long a disconnected player has to come back before the auto-pilot plays for them. */
+    /** How long a disconnected player has to come back before the auto-pilot finishes their pending moves. */
     private static long autoPilotDelayMs = 15000;
+    /** How long a disconnected player has to come back before they retire from the flight (between cards). */
+    private static long retireDelayMs = 60000;
+    /** During ship building (which is timed) a disconnected player's ship is finished after this delay. */
+    private static long buildingDelayMs = 30000;
     /** How long a game with nobody connected is kept, waiting for someone to rejoin. */
     private static final long ABANDONED_GAME_MS = 120000;
 
@@ -190,12 +197,43 @@ public class Controller implements Agent {
     public boolean runAutoPilot() {
         final long now = System.currentTimeMillis();
         final Set<String> absent = new HashSet<>();
+        final Set<String> retiring = new HashSet<>();
+        final boolean building = model.getState() instanceof BuildingState
+                || model.getState() instanceof HourGlassFinishedState;
+        final long delay = building ? buildingDelayMs : autoPilotDelayMs;
         disconnectedSince.forEach((name, since) -> {
-            if (now - since >= autoPilotDelayMs) {
+            if (now - since >= delay) {
                 absent.add(name);
             }
+            if (now - since >= retireDelayMs) {
+                retiring.add(name);
+            }
         });
-        return !absent.isEmpty() && AutoPilot.play(this, absent);
+        final boolean retired = retireAbsentPlayers(retiring);
+        return (!absent.isEmpty() && AutoPilot.play(this, absent)) || retired;
+    }
+
+    /**
+     * Between cards, players who have been gone for longer than the retire delay leave the flight,
+     * like with "Leave race": they keep their credits and sell their goods at half price at the end.
+     *
+     * @return true if someone retired
+     */
+    private boolean retireAbsentPlayers(Set<String> retiring) {
+        boolean retired = false;
+        for (Player player : model.getFlightBoard().getTurnOrder()) {
+            if (!(model.getState() instanceof FlightPhase) || !retiring.contains(player.getName())) {
+                continue;
+            }
+            try {
+                model.getState().leaveRace(player.getName());
+                System.out.println("Player " + player.getName() + " retired from game " + gameID + " after disconnecting");
+                retired = true;
+            } catch (InvalidCommand | InvalidParameters e) {
+                System.err.println("Could not retire " + player.getName() + ": " + e.getMessage());
+            }
+        }
+        return retired;
     }
 
     /**
@@ -203,6 +241,23 @@ public class Controller implements Agent {
      */
     public static void setAutoPilotDelay(long delayMs) {
         autoPilotDelayMs = delayMs;
+        buildingDelayMs = delayMs;
+    }
+
+    /**
+     * Restores the default delays (15 s auto-pilot, 30 s during building, 60 s before retiring).
+     */
+    public static void resetDisconnectionDelays() {
+        autoPilotDelayMs = 15000;
+        buildingDelayMs = 30000;
+        retireDelayMs = 60000;
+    }
+
+    /**
+     * Changes how long a disconnected player has to come back before they retire (used by tests).
+     */
+    public static void setRetireDelay(long delayMs) {
+        retireDelayMs = delayMs;
     }
 
 
